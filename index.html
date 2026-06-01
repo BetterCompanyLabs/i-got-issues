@@ -84,7 +84,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn.ghost:hover{background:var(--bg)}
 .btn.danger{background:#e24b4a;border-color:#e24b4a}
 .btn.danger:hover{background:#c03030}
-.badge-count{background:var(--purple-light);color:var(--purple);font-size:11px;padding:1px 7px;border-radius:10px;font-weight:600}
+.badge-count{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:var(--purple-light);color:var(--purple);font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap;border:1px solid transparent;line-height:1.2;min-height:20px;flex-shrink:0}
 .stats-pills{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .status-stat-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap;border:1px solid transparent;cursor:pointer;transition:transform .08s,filter .08s,box-shadow .08s}
 .status-stat-pill:hover{filter:brightness(.96);transform:translateY(-1px)}
@@ -197,8 +197,12 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 /* toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:#1a1a2e;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:500;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-.hotkey-grid{display:grid;grid-template-columns:135px 1fr;gap:8px 12px;font-size:13px;align-items:center}
-.hotkey-key{display:inline-flex;justify-content:center;align-items:center;min-width:34px;padding:3px 10px;border:1px solid var(--border);border-radius:5px;background:var(--bg);font-weight:700;color:var(--text)}
+.hotkey-sections{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;font-size:13px}
+.hotkey-section{display:flex;flex-direction:column;gap:8px;min-width:0}
+.hotkey-section-title{font-size:11px;font-weight:800;color:var(--text-2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.hotkey-grid{display:grid;grid-template-columns:118px 1fr;gap:8px 10px;align-items:center}
+.hotkey-key{display:inline-flex;justify-content:center;align-items:center;min-width:34px;padding:3px 10px;border:1px solid var(--border);border-radius:5px;background:var(--bg);font-weight:700;color:var(--text);white-space:nowrap}
+@media(max-width:640px){.hotkey-sections{grid-template-columns:1fr}.hotkey-grid{grid-template-columns:110px 1fr}}
 .irow.selected{background:#f0f0ff}
 .irow.dragging{opacity:.45;cursor:grabbing}
 .irow.drag-over{outline:2px solid var(--purple);outline-offset:-2px}
@@ -221,6 +225,86 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .empty-board{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;color:var(--text-2)}
 .empty-board i{font-size:48px;opacity:.3}
 .empty-board p{font-size:15px}
+
+
+/* --- Responsive polish v2: keep issue column readable, avoid header/pill overlap --- */
+.topbar-logo,
+.topbar-logo span,
+.topbar .btn,
+.active-project-pill,
+.status-stat-pill{white-space:nowrap;flex-shrink:0}
+.topbar-logo{min-width:max-content}
+.topbar{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.topbar::-webkit-scrollbar{display:none}
+.stats-pills{flex-wrap:nowrap;min-width:max-content}
+.toolbar{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.toolbar::-webkit-scrollbar{display:none}
+.toolbar>*{flex-shrink:0}
+.board{width:100%}
+.grp{max-width:100%}
+.tbl{table-layout:fixed;min-width:900px}
+.tbl col:nth-child(2){width:42% !important}
+.tbl col:nth-child(3){width:93px !important}
+.tbl col:nth-child(4){width:97px !important}
+.tbl col:nth-child(5){width:115px !important}
+.tbl col:nth-child(6){width:87px !important}
+.tbl col:nth-child(7){width:101px !important}
+.tbl col:nth-child(8){width:75px !important}
+.hdr-row th.th-title,.td-title{min-width:280px}
+.title-wrap{min-width:0}
+.title-text{min-width:0}
+
+@media(max-width:900px){
+  .topbar{height:auto;min-height:52px;padding:8px 10px;gap:8px}
+  .topbar-logo{font-size:15px}
+  .topbar-logo i{font-size:19px}
+  .active-project-pill{max-width:44px;padding:7px 9px}
+  .active-project-pill span{display:none}
+  .stats-pills{gap:5px}
+  .status-stat-pill{padding:2px 9px}
+  .status-stat-pill .stat-label{display:none}
+  .toolbar{top:52px;padding:8px 10px;gap:8px}
+  .tb-input{width:190px}
+  .tb-label,.toolbar .sep{display:none}
+  .board{padding:12px 10px}
+  .tbl{min-width:650px}
+  .tbl col:nth-child(2){width:300px !important}
+  .tbl col:nth-child(5),
+  .tbl col:nth-child(6),
+  .tbl col:nth-child(8),
+  .tbl col:nth-child(9){display:none}
+  .hdr-row th:nth-child(5),.hdr-row th:nth-child(6),.hdr-row th:nth-child(8),.hdr-row th:nth-child(9),
+  .irow td:nth-child(5),.irow td:nth-child(6),.irow td:nth-child(8),.irow td:nth-child(9){display:none}
+}
+
+@media(max-width:560px){
+  body{overflow-x:hidden}
+  .topbar{position:sticky;top:0}
+  .topbar .btn.ghost:not(.theme-toggle){display:none}
+  .topbar-logo{font-size:15px;gap:6px}
+  .topbar-logo span{display:inline-block;max-width:none}
+  .btn{padding:7px 11px}
+  .toolbar{top:50px;min-height:50px}
+  .tb-input{width:150px}
+  .tb-sel{max-width:130px}
+  .board{padding:10px 8px}
+  .grp-head{padding:9px 10px}
+  .grp{border-radius:8px}
+  .tbl{min-width:520px}
+  .tbl col:nth-child(1){width:36px !important}
+  .tbl col:nth-child(2){width:250px !important}
+  .tbl col:nth-child(3){width:86px !important}
+  .tbl col:nth-child(4){width:92px !important}
+  .tbl col:nth-child(7){width:56px !important}
+  .hdr-row th{padding:7px 6px;font-size:10px;letter-spacing:.35px}
+  .hdr-row th.th-title,.td-title{min-width:250px}
+  .title-wrap{padding:0 8px;gap:6px}
+  .badge{min-width:58px;padding:4px 8px;font-size:11px}
+  .due-pill{min-width:34px;max-width:42px;padding:4px 6px}
+  .due-pill.set{font-size:0}
+  .due-pill.set::before{content:'📅';font-size:12px}
+}
+
 </style>
 </head>
 <body>
@@ -325,31 +409,52 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 
 <!-- hotkeys -->
 <div class="overlay" id="hotkeyOverlay" style="display:none" onclick="overlayClick(event,'hotkeyOverlay')">
-  <div class="modal-inner" onclick="event.stopPropagation()" style="max-width:520px">
+  <div class="modal-inner" onclick="event.stopPropagation()" style="max-width:760px">
     <div class="modal-hdr">
       <i class="ti ti-keyboard" style="color:var(--purple)"></i>
       <span class="modal-hdr-t">Hotkeys</span>
       <button class="modal-close" onclick="closeHotkeys()"><i class="ti ti-x"></i></button>
     </div>
     <div class="modal-body">
-      <div class="hotkey-grid">
-        <span class="hotkey-key">I / N / +</span><span>Create new issue</span>
-        <span class="hotkey-key">C</span><span>Copy & duplicate selected issue(s)</span>
-        <span class="hotkey-key">P</span><span>Cycle through priorities</span>
-        <span class="hotkey-key">T</span><span>Set due date to today</span>
-        <span class="hotkey-key">W</span><span>Set due date to next week</span>
-        <span class="hotkey-key">#</span><span>Add one day to due date</span>
-        <span class="hotkey-key">⌫ / Delete</span><span>Delete selected issue(s)</span>
-        <span class="hotkey-key">1 / O</span><span>Set selected issue(s) to Open</span>
-        <span class="hotkey-key">2 / A</span><span>Set selected issue(s) to Active</span>
-        <span class="hotkey-key">3 / R</span><span>Set selected issue(s) to Review</span>
-        <span class="hotkey-key">4 / D</span><span>Set selected issue(s) to Done</span>
-        <span class="hotkey-key">5 / B</span><span>Set selected issue(s) to Blocked</span>
-        <span class="hotkey-key">E</span><span>Export workspace JSON with timestamp</span>
-        <span class="hotkey-key">⌘A</span><span>Select all visible issues</span>
-        <span class="hotkey-key">Shift + Click</span><span>Select a visible range</span>
-        <span class="hotkey-key">Space</span><span>Deselect selected issues</span>
-        <span class="hotkey-key">Tab</span><span>Move to next visible issue</span>
+      <div class="hotkey-sections">
+        <div class="hotkey-section">
+          <div class="hotkey-section-title">Create & Edit</div>
+          <div class="hotkey-grid">
+            <span class="hotkey-key">I / N / +</span><span>Create new issue</span>
+            <span class="hotkey-key">Enter</span><span>Edit title of selected issue</span>
+            <span class="hotkey-key">⌫ / Delete</span><span>Delete selected issue(s)</span>
+            <span class="hotkey-key">C</span><span>Copy & duplicate selected issue(s)</span>
+          </div>
+        </div>
+        <div class="hotkey-section">
+          <div class="hotkey-section-title">Selection & Navigation</div>
+          <div class="hotkey-grid">
+            <span class="hotkey-key">Tab</span><span>Move to next visible issue</span>
+            <span class="hotkey-key">⌘A</span><span>Select all visible issues</span>
+            <span class="hotkey-key">Shift + Click</span><span>Select a visible range</span>
+            <span class="hotkey-key">Space</span><span>Deselect selected issues</span>
+          </div>
+        </div>
+        <div class="hotkey-section">
+          <div class="hotkey-section-title">Status</div>
+          <div class="hotkey-grid">
+            <span class="hotkey-key">1 / O</span><span>Set selected issue(s) to Open</span>
+            <span class="hotkey-key">2 / A</span><span>Set selected issue(s) to Active</span>
+            <span class="hotkey-key">3 / R</span><span>Set selected issue(s) to Review</span>
+            <span class="hotkey-key">4 / D</span><span>Set selected issue(s) to Done</span>
+            <span class="hotkey-key">5 / B</span><span>Set selected issue(s) to Blocked</span>
+          </div>
+        </div>
+        <div class="hotkey-section">
+          <div class="hotkey-section-title">Bulk Actions</div>
+          <div class="hotkey-grid">
+            <span class="hotkey-key">E</span><span>Export workspace JSON with timestamp</span>
+            <span class="hotkey-key">P</span><span>Cycle through priorities</span>
+            <span class="hotkey-key">T</span><span>Set due date to today</span>
+            <span class="hotkey-key">W</span><span>Set due date to next week</span>
+            <span class="hotkey-key">#</span><span>Add one day to due date</span>
+          </div>
+        </div>
       </div>
     </div>
     <div class="modal-foot">
@@ -368,7 +473,7 @@ const S={
     colors:{
       "Open":        {bg:"#dbeafe",c:"#1e40af",dot:"#3b82f6"},
       "Active": {bg:"#fef3c7",c:"#92400e",dot:"#f59e0b"},
-      "Review":    {bg:"#ede8fe",c:"#3c3489",dot:"#7f77dd"},
+      "Review":    {bg:"#F6EAF5",c:"#9B5A92",dot:"#C97BBF"},
       "Done":        {bg:"#d1fae5",c:"#065f46",dot:"#10b981"},
       "Blocked":     {bg:"#fee2e2",c:"#991b1b",dot:"#ef4444"},
     }
@@ -864,6 +969,19 @@ function cyclePriorityForSelected(){
   persist();render();toast(`${ids.length} issue${ids.length===1?"":"s"} priority → ${next||"Clear"}`);
 }
 
+function editSelectedIssueTitle(){
+  const ids=getSelectedIds();
+  const id=ids.find(x=>currentVisibleIds.includes(x))||ids[0];
+  if(!id){toast("No issue selected");return;}
+  const row=document.querySelector(`.irow[data-id="${CSS.escape(id)}"]`);
+  if(!row){toast("Selected issue is not visible");return;}
+  row.scrollIntoView({block:"nearest",behavior:"smooth"});
+  setTimeout(()=>{
+    const title=row.querySelector(".title-text");
+    if(title)title.click();
+  },30);
+}
+
 function selectNextVisibleIssue(){
   if(!currentVisibleIds.length){toast("No visible issues");return;}
   let currentIndex=-1;
@@ -1026,6 +1144,7 @@ function anyModalOpen(){
 function handleHotkeys(e){
   if(isTypingTarget(e.target)||anyModalOpen())return;
   const k=e.key.toLowerCase();
+  if(e.key==="Enter"){e.preventDefault();editSelectedIssueTitle();return;}
   if(e.key==="Tab"){e.preventDefault();selectNextVisibleIssue();return;}
   if((e.metaKey||e.ctrlKey)&&k==="a"){e.preventDefault();selectAllVisible();return;}
   if(e.metaKey||e.ctrlKey||e.altKey)return;
