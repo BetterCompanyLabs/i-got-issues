@@ -1361,7 +1361,7 @@ function anyModalOpen(){
          document.getElementById("confirmOverlay").style.display!=="none"||
          document.getElementById("hotkeyOverlay").style.display!=="none"||ddActive||projectMenuOpen;
 }
-nction handleHotkeys(e){
+function handleHotkeys(e){
   const confirmOpen =
     document.getElementById("confirmOverlay").style.display !== "none";
   if(confirmOpen){
@@ -1465,7 +1465,7 @@ document.getElementById("confirmOverlay").style.display="flex";
 document.getElementById("confirmOkBtn").onclick=()=>{doDelete();closeConfirm();};
 setTimeout(()=>{
   document.getElementById("confirmOkBtn").focus();
-},10);
+},10);}
 function closeConfirm(){document.getElementById("confirmOverlay").style.display="none";delTargets=[];}
 function doDelete(){
   if(!delTargets.length)return;
