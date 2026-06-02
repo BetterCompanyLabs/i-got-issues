@@ -1361,7 +1361,21 @@ function anyModalOpen(){
          document.getElementById("confirmOverlay").style.display!=="none"||
          document.getElementById("hotkeyOverlay").style.display!=="none"||ddActive||projectMenuOpen;
 }
-function handleHotkeys(e){
+nction handleHotkeys(e){
+  const confirmOpen =
+    document.getElementById("confirmOverlay").style.display !== "none";
+  if(confirmOpen){
+    if(e.key==="Enter"){
+      e.preventDefault();
+      document.getElementById("confirmOkBtn").click();
+      return;
+    }
+    if(e.key==="Escape"){
+      e.preventDefault();
+      closeConfirm();
+      return;
+    }
+  }
   if(isTypingTarget(e.target)||anyModalOpen())return;
   const k=e.key.toLowerCase();
   if(e.key==="Enter"){e.preventDefault();editSelectedIssueTitle();return;}
@@ -1447,9 +1461,11 @@ function confirmDel(idOrIds){
   const p=document.querySelector("#confirmOverlay p");
   h.textContent=delTargets.length>1?`Delete ${delTargets.length} issues?`:"Delete issue?";
   p.textContent=delTargets.length>1?"The selected issues will be deleted. This action cannot be undone.":"This action cannot be undone.";
-  document.getElementById("confirmOverlay").style.display="flex";
-  document.getElementById("confirmOkBtn").onclick=()=>{doDelete();closeConfirm();};
-}
+document.getElementById("confirmOverlay").style.display="flex";
+document.getElementById("confirmOkBtn").onclick=()=>{doDelete();closeConfirm();};
+setTimeout(()=>{
+  document.getElementById("confirmOkBtn").focus();
+},10);
 function closeConfirm(){document.getElementById("confirmOverlay").style.display="none";delTargets=[];}
 function doDelete(){
   if(!delTargets.length)return;
