@@ -104,8 +104,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tb-sel:focus{border-color:var(--purple)}
 .tb-label{font-size:11px;color:var(--text-2);font-weight:500;white-space:nowrap}
 /* board */
-.board{padding:20px;max-width:1400px;margin:0 auto}
-/* group */
+.board{
+  padding:20px 40px;
+  width:100%;
+  max-width:none;
+  margin:0;}
+  /* group */
 .grp{margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .grp{overflow-x:auto;overflow-y:hidden}
 .grp-head{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background .1s}
@@ -360,9 +364,10 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .empty-card h2{font-size:20px;font-weight:900;color:var(--purple);letter-spacing:-.3px;margin-top:0}
 .empty-actions .btn{min-width:118px;justify-content:center;font-weight:800;padding-left:14px;padding-right:14px}
 .site-footer{
-  max-width:1400px;
-  margin:0 auto;
-  padding:16px 20px 22px;
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding:16px 40px 22px;
   border-top:1px solid var(--border);
   display:flex;
   align-items:center;
