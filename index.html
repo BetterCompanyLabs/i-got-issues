@@ -778,19 +778,35 @@ function getFilter(){
 
 function sortIssues(list, sortKey){
   if(!sortKey||sortKey==="manual")return list;
+
   const statusOrder={"Open":1,"Active":2,"Review":3,"Blocked":4,"Done":5};
   const priorityOrder={"Critical":1,"High":2,"Medium":3,"Low":4};
   const effortOrder={"XS":1,"S":2,"M":3,"L":4,"XL":5};
   const originalIndex=new Map(issues.map((issue,idx)=>[issue.id,idx]));
-  return [...list].sort((a,b)=>{
-    let av=a[sortKey]||"";
-    let bv=b[sortKey]||"";
-    if(sortKey==="title"){av=a.title||"";bv=b.title||"";}
-    if(sortKey==="status")return (statusOrder[av]||99)-(statusOrder[bv]||99)||((a.title||"").localeCompare(b.title||""));
-    if(sortKey==="priority")return (priorityOrder[av]||99)-(priorityOrder[bv]||99)||((a.title||"").localeCompare(b.title||""));
-    if(sortKey==="effort")return (effortOrder[av]||99)-(effortOrder[bv]||99)||((a.title||"").localeCompare(b.title||""));
-    return String(av).localeCompare(String(bv),undefined,{sensitivity:"base"}) || (originalIndex.get(a.id)||0)-(originalIndex.get(b.id)||0);
+
+  const sorted=[...list].sort((a,b)=>{
+    let result=0;
+
+    if(sortKey==="status"){
+      result=(statusOrder[a.status]||99)-(statusOrder[b.status]||99);
+    }else if(sortKey==="priority"){
+      result=(priorityOrder[a.priority]||99)-(priorityOrder[b.priority]||99);
+    }else if(sortKey==="effort"){
+      result=(effortOrder[a.effort]||99)-(effortOrder[b.effort]||99);
+    }else if(sortKey==="dueDate"){
+      result=String(a.dueDate||"").localeCompare(String(b.dueDate||""));
+    }else{
+      result=String(a[sortKey]||"").localeCompare(String(b[sortKey]||""),undefined,{sensitivity:"base"});
+    }
+
+    if(result===0){
+      result=(originalIndex.get(a.id)||0)-(originalIndex.get(b.id)||0);
+    }
+
+    return sortDirection==="desc"?-result:result;
   });
+
+  return sorted;
 }
 
 function render(){
