@@ -1350,8 +1350,10 @@ function closeDD(){document.getElementById("ddPop").style.display="none";ddActiv
 
 document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();});
 document.addEventListener("keydown",e=>{
-  const confirmOpen =
-    document.getElementById("confirmOverlay").style.display !== "none";
+const confirmOpen =
+  getComputedStyle(
+    document.getElementById("confirmOverlay")
+  ).display !== "none";
   if(confirmOpen){
     if(e.key==="Enter"){
       e.preventDefault();
@@ -1466,14 +1468,23 @@ function confirmDel(idOrIds){
   delTargets=Array.isArray(idOrIds)?idOrIds:[idOrIds];
   const h=document.querySelector("#confirmOverlay h3");
   const p=document.querySelector("#confirmOverlay p");
-  h.textContent=delTargets.length>1?`Delete ${delTargets.length} issues?`:"Delete issue?";
-  p.textContent=delTargets.length>1?"The selected issues will be deleted. This action cannot be undone.":"This action cannot be undone.";
-document.getElementById("confirmOverlay").style.display="flex";
-document.getElementById("confirmOkBtn").onclick=()=>{doDelete();closeConfirm();};
-setTimeout(()=>{
-  document.getElementById("confirmOkBtn").focus();
-},10);}
-function closeConfirm(){document.getElementById("confirmOverlay").style.display="none";delTargets=[];}
+  h.textContent=delTargets.length>1
+    ? `Delete ${delTargets.length} issues?`
+    : "Delete issue?";
+  p.textContent=delTargets.length>1
+    ? "The selected issues will be deleted. This action cannot be undone."
+    : "This action cannot be undone.";
+  document.getElementById("confirmOverlay").style.display="flex";
+  document.getElementById("confirmOkBtn").onclick=()=>{
+    doDelete();
+    closeConfirm();
+  };
+  setTimeout(()=>{
+    document.getElementById("confirmOkBtn").focus();
+  },10);
+} 
+function closeConfirm(){
+  document.getElementById("confirmOverlay").style.display="none";  delTargets=[];}
 function doDelete(){
   if(!delTargets.length)return;
   const n=delTargets.length;
