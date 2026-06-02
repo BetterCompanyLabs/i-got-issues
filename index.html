@@ -1350,18 +1350,6 @@ function closeDD(){document.getElementById("ddPop").style.display="none";ddActiv
 
 document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();});
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){closeDD();closeProjectMenu();closeDesc();closeConfirm();closeHotkeys();return;}
-  handleHotkeys(e);
-});
-function isTypingTarget(el){
-  return el&&(("INPUT"===el.tagName&&el.type!=="checkbox")||"TEXTAREA"===el.tagName||"SELECT"===el.tagName||el.isContentEditable);
-}
-function anyModalOpen(){
-  return document.getElementById("descOverlay").style.display!=="none"||
-         document.getElementById("confirmOverlay").style.display!=="none"||
-         document.getElementById("hotkeyOverlay").style.display!=="none"||ddActive||projectMenuOpen;
-}
-function handleHotkeys(e){
   const confirmOpen =
     document.getElementById("confirmOverlay").style.display !== "none";
   if(confirmOpen){
@@ -1376,6 +1364,25 @@ function handleHotkeys(e){
       return;
     }
   }
+  if(e.key==="Escape"){
+    closeDD();
+    closeProjectMenu();
+    closeDesc();
+    closeConfirm();
+    closeHotkeys();
+    return;
+  }
+  handleHotkeys(e);
+});
+function isTypingTarget(el){
+  return el&&(("INPUT"===el.tagName&&el.type!=="checkbox")||"TEXTAREA"===el.tagName||"SELECT"===el.tagName||el.isContentEditable);
+}
+function anyModalOpen(){
+  return document.getElementById("descOverlay").style.display!=="none"||
+         document.getElementById("confirmOverlay").style.display!=="none"||
+         document.getElementById("hotkeyOverlay").style.display!=="none"||ddActive||projectMenuOpen;
+}
+function handleHotkeys(e){
   if(isTypingTarget(e.target)||anyModalOpen())return;
   const k=e.key.toLowerCase();
   if(e.key==="Enter"){e.preventDefault();editSelectedIssueTitle();return;}
