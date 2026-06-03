@@ -905,7 +905,7 @@ sortDir:sortDirection
 function sortIssues(list, sortKey){
   if(!sortKey||sortKey==="manual")return list;
 
-  const statusOrder={"Open":1,"Active":2,"Review":3,"Blocked":4,"Done":5};
+const statusOrder={"Open":1,"In Progress":2,"Review":3,"Blocked":4,"Done":5};
   const priorityOrder={"Critical":1,"High":2,"Medium":3,"Low":4};
   const effortOrder={"XS":1,"S":2,"M":3,"L":4,"XL":5};
   const originalIndex=new Map(issues.map((issue,idx)=>[issue.id,idx]));
@@ -1670,6 +1670,18 @@ function doDelete(){
 }
 
 // add
+function addIssueTop(){
+  const f=getFilter();
+  const ni={id:uid(),title:"New Issue",status:f.st||"Open",priority:f.pr||"Medium",topic:f.to||"",effort:"",who:"",dueDate:"",done:false,desc:""};
+  issues.unshift(ni);
+  selectedIds=new Set([ni.id]);
+  lastSelectedId=ni.id;
+  selectionAnchorId=ni.id;
+  persist();
+  render();
+  setTimeout(()=>startTitleEditById(ni.id),80);
+}
+
 function addIssueInGroup(gkey){
   const f=getFilter();
   const ni={id:uid(),title:"New Issue",status:"Open",priority:"Medium",topic:"",effort:"",who:"",dueDate:"",done:false,desc:""};
@@ -1682,14 +1694,6 @@ function addIssueInGroup(gkey){
   persist();
   render();
   setTimeout(()=>startTitleEditById(ni.id),80);
-}
-function addIssueInGroup(gkey){
-  const f=getFilter();
-  const ni={id:uid(),title:"New Issue",status:"Open",priority:"Medium",topic:"",effort:"",who:"",dueDate:"",done:false,desc:""};
-  if(f.grp!=="none"&&gkey!=="__all__"&&gkey!=="—")ni[f.grp]=gkey;
-  if(f.st)ni.status=f.st;
-  issues.unshift(ni);persist();render();
-  setTimeout(()=>{const el=document.querySelector(".title-text");if(el)el.click();},80);
 }
 
 // export / import
