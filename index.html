@@ -709,7 +709,10 @@ function parseTitleTopic(raw){
 }
 
 function getExistingTopics(){
-  return [...new Set(issues.map(i=>i.topic).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"}));
+  const fromIssues=issues.map(i=>i.topic).filter(Boolean);
+  const topicSelect=document.getElementById("qTo");
+  const fromSelect=topicSelect?[...topicSelect.options].map(o=>o.value).filter(Boolean):[];
+  return [...new Set([...fromIssues,...fromSelect])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"}));
 }
 function getTopicToken(input){
   if(!input)return null;
@@ -718,26 +721,37 @@ function getTopicToken(input){
   const before=value.slice(0,pos);
   const match=before.match(/(^|\s)#([A-Za-z0-9_-]*)$/);
   if(!match)return null;
-  const start=pos-match[2].length-1;
-  return{query:match[2],start,end:pos};
+  const query=match[2]||"";
+  const start=pos-query.length-1;
+  return{query,start,end:pos};
 }
 function updateTopicSuggest(input){
   const pop=document.getElementById("topicSuggest");
   if(!pop||!input){closeTopicSuggest();return;}
+
   const token=getTopicToken(input);
   if(!token){closeTopicSuggest();return;}
+
+  const topics=getExistingTopics();
+  if(!topics.length){closeTopicSuggest();return;}
+
   const q=token.query.toLowerCase();
-  const matches=getExistingTopics().filter(t=>!q||t.toLowerCase().includes(q)).slice(0,8);
+  const matches=topics.filter(t=>!q||t.toLowerCase().includes(q)).slice(0,8);
   if(!matches.length){closeTopicSuggest();return;}
+
   topicSuggestState={input,items:matches,activeIndex:0,start:token.start,end:token.end};
   pop.innerHTML=matches.map((topic,idx)=>`<div class="topic-suggest-item${idx===0?" active":""}" onmousedown="event.preventDefault();applyTopicSuggestion(${idx});"><i class="ti ti-hash"></i>${esc(topic)}</div>`).join("");
+
   const rect=input.getBoundingClientRect();
-  let left=rect.left;
-  let top=rect.bottom+4;
   pop.style.display="block";
+
+  let left=rect.left;
+  let top=rect.bottom+6;
   const width=Math.max(pop.offsetWidth,180);
+
   if(left+width>window.innerWidth-8)left=window.innerWidth-width-8;
-  if(top+pop.offsetHeight>window.innerHeight-8)top=rect.top-pop.offsetHeight-4;
+  if(top+pop.offsetHeight>window.innerHeight-8)top=rect.top-pop.offsetHeight-6;
+
   pop.style.left=left+"px";
   pop.style.top=top+"px";
 }
@@ -1342,24 +1356,28 @@ function beginTitleEdit(wrap,id){
   inp.type="text";inp.className="title-input";inp.value=i.title;
   span.replaceWith(inp);inp.focus();inp.select();
   inp.addEventListener("input",()=>updateTopicSuggest(inp));
+  inp.addEventListener("keyup",()=>updateTopicSuggest(inp));
   inp.addEventListener("click",()=>updateTopicSuggest(inp));
   let committed=false;
   function commit(openNext=false){
     if(committed)return;
     committed=true;
     const parsed=parseTitleTopic(inp.value);
-if(parsed.title){
-  i.title=parsed.title;
-}
-if(parsed.topic){
-  i.topic=parsed.topic;
-}
+    if(parsed.title){
+      i.title=parsed.title;
+    }
+    if(parsed.topic){
+      i.topic=parsed.topic;
+    }
     persist();render();
     if(openNext&&titleEditSequenceActive)setTimeout(()=>editNextSelectedIssueTitle(id),45);
     else titleEditSequenceActive=false;
   }
   inp.addEventListener("blur",()=>{setTimeout(closeTopicSuggest,120);commit(false);});
   inp.addEventListener("keydown",ev=>{
+    if(ev.key==="#"){
+      setTimeout(()=>updateTopicSuggest(inp),0);
+    }
     if(topicSuggestState.input===inp&&topicSuggestState.items.length){
       if(ev.key==="ArrowDown"){
         ev.preventDefault();
