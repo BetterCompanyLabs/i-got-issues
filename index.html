@@ -1554,7 +1554,17 @@ if(e.key==="ArrowUp"){e.preventDefault();selectPreviousVisibleIssue();return;}
   if(e.metaKey||e.ctrlKey||e.altKey)return;
   const code=e.code;
   if(e.key===" "){e.preventDefault();deselectAllIssues();return;}
-if(k==="n"||e.key==="+"||code==="NumpadAdd")  if(k==="c"){e.preventDefault();duplicateSelectedIssues();return;}
+if(k==="n"||e.key==="+"||code==="NumpadAdd"){
+  e.preventDefault();
+  addIssueTop();
+  return;
+}
+
+if(k==="c"){
+  e.preventDefault();
+  duplicateSelectedIssues();
+  return;
+}
   if(k==="p"){e.preventDefault();cyclePriorityForSelected();return;}
   if(k==="t"){e.preventDefault();setDueDateForSelected(todayISO(),"Today");return;}
   if(k==="w"){e.preventDefault();setDueDateForSelected(addDaysISO(todayISO(),7),"Next week");return;}
@@ -1660,11 +1670,18 @@ function doDelete(){
 }
 
 // add
-function addIssueTop(){
+function addIssueInGroup(gkey){
   const f=getFilter();
-  const ni={id:uid(),title:"New Issue",status:f.st||"Open",priority:f.pr||"Medium",topic:f.to||"",effort:"",who:"",dueDate:"",done:false,desc:""};
-  issues.unshift(ni);persist();render();
-  setTimeout(()=>{const el=document.querySelector(".title-text");if(el)el.click();},80);
+  const ni={id:uid(),title:"New Issue",status:"Open",priority:"Medium",topic:"",effort:"",who:"",dueDate:"",done:false,desc:""};
+  if(f.grp!=="none"&&gkey!=="__all__"&&gkey!=="—")ni[f.grp]=gkey;
+  if(f.st)ni.status=f.st;
+  issues.unshift(ni);
+  selectedIds=new Set([ni.id]);
+  lastSelectedId=ni.id;
+  selectionAnchorId=ni.id;
+  persist();
+  render();
+  setTimeout(()=>startTitleEditById(ni.id),80);
 }
 function addIssueInGroup(gkey){
   const f=getFilter();
