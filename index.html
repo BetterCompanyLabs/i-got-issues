@@ -1534,6 +1534,20 @@ const confirmOpen =
     closeHotkeys();
     return;
   }
+
+  if(e.shiftKey&&!isTypingTarget(e.target)&&!anyModalOpen()){
+    if(e.key==="ArrowDown"){
+      e.preventDefault();
+      extendVisibleSelection(1);
+      return;
+    }
+    if(e.key==="ArrowUp"){
+      e.preventDefault();
+      extendVisibleSelection(-1);
+      return;
+    }
+  }
+
   handleHotkeys(e);
 });
 function isTypingTarget(el){
