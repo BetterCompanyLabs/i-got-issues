@@ -854,7 +854,7 @@ function updateStatsPills(){
     const status=i.status||"Open";
     if(counts[status]!=null)counts[status]++;
   });
-  const total=`<span id="totalCount" class="badge-count">${issues.length} Issues</span>`;
+  const total=`<span id="totalCount" class="badge-count" style="cursor:pointer" onclick="resetStatusFilter()" title="Show all issues">${issues.length} Issues</span>`;
   const statusPills=statusOrder.map(st=>{
     const col=S.status.colors[st]||{bg:"#f3f4f6",c:"#6b7280"};
     const active=document.getElementById("qSt")?.value===st?" active":"";
@@ -874,6 +874,16 @@ function toggleStatusFilter(status){
   const sel=document.getElementById("qSt");
   if(!sel)return;
   sel.value=sel.value===status?"":status;
+  selectedIds.clear();
+  lastSelectedId=null;
+  selectionAnchorId=null;
+  render();
+}
+
+function resetStatusFilter(){
+  const sel=document.getElementById("qSt");
+  if(!sel)return;
+  sel.value="";
   selectedIds.clear();
   lastSelectedId=null;
   selectionAnchorId=null;
