@@ -447,7 +447,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   <span class="tb-label">Filter:</span>
   <select class="tb-sel" id="qSt" onchange="render()">
     <option value="">All Statuses</option>
-    <option>Open</option><option>Active</option><option>Review</option><option>Done</option><option>Blocked</option>
+    <option>Open</option><option>In Progress</option><option>Review</option><option>Done</option><option>Blocked</option>
   </select>
   <select class="tb-sel" id="qPr" onchange="render()">
     <option value="">All Priorities</option>
@@ -518,7 +518,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
         <div class="hotkey-section">
           <div class="hotkey-section-title">Create & Edit</div>
           <div class="hotkey-grid">
-            <span class="hotkey-key">I / N / +</span><span>Create new issue</span>
+            <span class="hotkey-key">+ / N</span><span>Create new issue</span>
             <span class="hotkey-key">Enter</span><span>Edit title of selected issue</span>
             <span class="hotkey-key">#...</span><span>Type #... at the end of a title to auto-assign a topic</span>
             <span class="hotkey-key">⌫ / Delete</span><span>Delete selected issue(s)</span>
@@ -537,7 +537,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
           <div class="hotkey-section-title">Status</div>
           <div class="hotkey-grid">
             <span class="hotkey-key">1 / O</span><span>Set selected issue(s) to Open</span>
-            <span class="hotkey-key">2 / A</span><span>Set selected issue(s) to Active</span>
+            <span class="hotkey-key">2 / I</span><span>Set selected issue(s) to In Progress</span>
             <span class="hotkey-key">3 / R</span><span>Set selected issue(s) to Review</span>
             <span class="hotkey-key">4 / D</span><span>Set selected issue(s) to Done</span>
             <span class="hotkey-key">5 / B</span><span>Set selected issue(s) to Blocked</span>
@@ -568,10 +568,10 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 <script>
 const S={
   status:{
-    opts:["Open","Active","Review","Done","Blocked"],
+opts:["Open","In Progress","Review","Done","Blocked"],
     colors:{
       "Open":        {bg:"#dbeafe",c:"#1e40af",dot:"#3b82f6"},
-      "Active": {bg:"#fef3c7",c:"#92400e",dot:"#f59e0b"},
+      "In Progress": {bg:"#fef3c7",c:"#92400e",dot:"#f59e0b"},
       "Review":    {bg:"#F6EAF5",c:"#9B5A92",dot:"#C97BBF"},
       "Done":        {bg:"#d1fae5",c:"#065f46",dot:"#10b981"},
       "Blocked":     {bg:"#fee2e2",c:"#991b1b",dot:"#ef4444"},
@@ -672,7 +672,7 @@ function loadCollapsedForActiveProject(){
   try{const d=localStorage.getItem(COLL_KEY+"_"+activeProjectId);if(d)collapsed=JSON.parse(d)||{};}catch(e){collapsed={};}
 }
 function migrateStatusLabels(){
-  const statusMap={"Offen":"Open","In Arbeit":"Active","In Progress":"Active","Erledigt":"Done","Blockiert":"Blocked"};
+  const statusMap={"Offen":"Open","In Arbeit":"In Progress","Active":"In Progress","Erledigt":"Done","Blockiert":"Blocked"};
   const priorityMap={"Kritisch":"Critical","Critical":"Critical","Hoch":"High","Mittel":"Medium","Niedrig":"Low"};
   let changed=false;
   const normalizeIssue=i=>{
@@ -848,7 +848,7 @@ function deleteProject(e,id){
 function updateStatsPills(){
   const holder=document.getElementById("statsPills");
   if(!holder)return;
-  const statusOrder=["Open","Active","Review","Done","Blocked"];
+  const statusOrder=["Open","In Progress","Review","Done","Blocked"];
   const counts=Object.fromEntries(statusOrder.map(st=>[st,0]));
   issues.forEach(i=>{
     const status=i.status||"Open";
@@ -998,7 +998,7 @@ function render(){
   const allKeys=new Set(filtered.map(keyOf));
 
   let keys=[...allKeys];
-  const order=f.grp==="status"?["Open","Active","Review","Blocked","Done"]:
+  const order=f.grp==="status"?["Open","In Progress","Review","Blocked","Done"]:
                f.grp==="priority"?["Critical","High","Medium","Low"]:null;
   if(order)keys.sort((a,b)=>{const ia=order.indexOf(a),ib=order.indexOf(b);return(ia<0?99:ia)-(ib<0?99:ib);});
   else keys.sort();
@@ -1541,8 +1541,7 @@ if(e.key==="ArrowUp"){e.preventDefault();selectPreviousVisibleIssue();return;}
   if(e.metaKey||e.ctrlKey||e.altKey)return;
   const code=e.code;
   if(e.key===" "){e.preventDefault();deselectAllIssues();return;}
-  if(k==="i"||k==="n"||e.key==="+"||code==="NumpadAdd"){e.preventDefault();addIssueTop();return;}
-  if(k==="c"){e.preventDefault();duplicateSelectedIssues();return;}
+if(k==="n"||e.key==="+"||code==="NumpadAdd")  if(k==="c"){e.preventDefault();duplicateSelectedIssues();return;}
   if(k==="p"){e.preventDefault();cyclePriorityForSelected();return;}
   if(k==="t"){e.preventDefault();setDueDateForSelected(todayISO(),"Today");return;}
   if(k==="w"){e.preventDefault();setDueDateForSelected(addDaysISO(todayISO(),7),"Next week");return;}
@@ -1550,7 +1549,7 @@ if(e.key==="ArrowUp"){e.preventDefault();selectPreviousVisibleIssue();return;}
   if(e.key==="Backspace"||e.key==="Delete"){e.preventDefault();confirmDeleteSelected();return;}
   if(k==="d"||k==="4"||code==="Digit4"||code==="Numpad4"){e.preventDefault();setStatusForSelected("Done");return;}
   if(k==="o"||k==="1"||code==="Digit1"||code==="Numpad1"){e.preventDefault();setStatusForSelected("Open");return;}
-  if(k==="2"||k==="a"||code==="Digit2"||code==="Numpad2"){e.preventDefault();setStatusForSelected("Active");return;}
+if(k==="2"||k==="i"||code==="Digit2"||code==="Numpad2"){e.preventDefault();setStatusForSelected("In Progress");return;}
   if(k==="r"||k==="3"||code==="Digit3"||code==="Numpad3"){e.preventDefault();setStatusForSelected("Review");return;}
   if(k==="b"||k==="5"||code==="Digit5"||code==="Numpad5"){e.preventDefault();setStatusForSelected("Blocked");return;}
   if(k==="e"){e.preventDefault();exportJSON();return;}
