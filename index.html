@@ -1313,6 +1313,17 @@ function extendVisibleSelection(offset){
 }
 
 function selectAllVisible(){
+  const allVisibleSelected=currentVisibleIds.length>0&&currentVisibleIds.every(id=>selectedIds.has(id));
+
+  if(allVisibleSelected){
+    currentVisibleIds.forEach(id=>selectedIds.delete(id));
+    selectionAnchorId=null;
+    lastSelectedId=null;
+    render();
+    toast("Visible selection cleared");
+    return;
+  }
+
   currentVisibleIds.forEach(id=>selectedIds.add(id));
   selectionAnchorId=currentVisibleIds[0]||null;
   lastSelectedId=currentVisibleIds[currentVisibleIds.length-1]||null;
