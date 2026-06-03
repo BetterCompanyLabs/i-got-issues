@@ -1356,7 +1356,10 @@ function beginTitleEdit(wrap,id){
   inp.type="text";inp.className="title-input";inp.value=i.title;
   span.replaceWith(inp);inp.focus();inp.select();
   inp.addEventListener("input",()=>updateTopicSuggest(inp));
-  inp.addEventListener("keyup",()=>updateTopicSuggest(inp));
+  inp.addEventListener("keyup",ev=>{
+    if(["ArrowDown","ArrowUp","Enter","Escape"].includes(ev.key))return;
+    updateTopicSuggest(inp);
+  });
   inp.addEventListener("click",()=>updateTopicSuggest(inp));
   let committed=false;
   function commit(openNext=false){
