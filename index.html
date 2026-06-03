@@ -185,6 +185,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .dd-text-input{flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);outline:none}
 .dd-text-input:focus{border-color:var(--purple)}
 .dd-ok{padding:6px 10px;background:var(--purple);color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:13px}
+.topic-suggest{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);z-index:1100;min-width:180px;max-width:260px;padding:5px;display:none;max-height:220px;overflow-y:auto}
+.topic-suggest-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:5px;cursor:pointer;font-size:13px;color:var(--text)}
+.topic-suggest-item:hover,.topic-suggest-item.active{background:var(--purple-light);color:var(--purple)}
+.topic-suggest-item i{font-size:13px;color:inherit}
+:root[data-theme="dark"] .topic-suggest{background:#252540!important;border-color:#3a3a5c!important}
+:root[data-theme="dark"] .topic-suggest-item:hover,:root[data-theme="dark"] .topic-suggest-item.active{background:#3a3460!important;color:#e8e8f0!important}
 /* modal */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal-inner{background:var(--surface);border-radius:10px;border:1px solid var(--border);width:100%;max-width:560px;box-shadow:var(--shadow)}
@@ -556,6 +562,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 </div>
 
 <div class="dd-popup" id="ddPop" style="display:none"></div>
+<div class="topic-suggest" id="topicSuggest"></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -604,6 +611,7 @@ let collapsed={};
 let descEditId=null;
 let ddActive=false;
 let projectMenuOpen=false;
+let topicSuggestState={input:null,items:[],activeIndex:0,start:0,end:0};
 const STORAGE_KEY="issue_tracker_v1"; // legacy single-board storage
 const PROJECTS_KEY="easy_issues_projects_v1";
 const ACTIVE_PROJECT_KEY="easy_issues_active_project_v1";
@@ -683,6 +691,7 @@ function persist(){
 }
 function uid(){return"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 
+
 function parseTitleTopic(raw){
   const original=String(raw||"").trim();
   const match=original.match(
@@ -697,6 +706,72 @@ function parseTitleTopic(raw){
     return {title:original,topic:null};
   }
   return {title,topic};
+}
+
+function getExistingTopics(){
+  return [...new Set(issues.map(i=>i.topic).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"}));
+}
+function getTopicToken(input){
+  if(!input)return null;
+  const pos=input.selectionStart;
+  const value=input.value;
+  const before=value.slice(0,pos);
+  const match=before.match(/(^|\s)#([A-Za-z0-9_-]*)$/);
+  if(!match)return null;
+  const start=pos-match[2].length-1;
+  return{query:match[2],start,end:pos};
+}
+function updateTopicSuggest(input){
+  const pop=document.getElementById("topicSuggest");
+  if(!pop||!input){closeTopicSuggest();return;}
+  const token=getTopicToken(input);
+  if(!token){closeTopicSuggest();return;}
+  const q=token.query.toLowerCase();
+  const matches=getExistingTopics().filter(t=>!q||t.toLowerCase().includes(q)).slice(0,8);
+  if(!matches.length){closeTopicSuggest();return;}
+  topicSuggestState={input,items:matches,activeIndex:0,start:token.start,end:token.end};
+  pop.innerHTML=matches.map((topic,idx)=>`<div class="topic-suggest-item${idx===0?" active":""}" onmousedown="event.preventDefault();applyTopicSuggestion(${idx});"><i class="ti ti-hash"></i>${esc(topic)}</div>`).join("");
+  const rect=input.getBoundingClientRect();
+  let left=rect.left;
+  let top=rect.bottom+4;
+  pop.style.display="block";
+  const width=Math.max(pop.offsetWidth,180);
+  if(left+width>window.innerWidth-8)left=window.innerWidth-width-8;
+  if(top+pop.offsetHeight>window.innerHeight-8)top=rect.top-pop.offsetHeight-4;
+  pop.style.left=left+"px";
+  pop.style.top=top+"px";
+}
+function closeTopicSuggest(){
+  const pop=document.getElementById("topicSuggest");
+  if(pop)pop.style.display="none";
+  topicSuggestState={input:null,items:[],activeIndex:0,start:0,end:0};
+}
+function refreshTopicSuggestActive(){
+  const pop=document.getElementById("topicSuggest");
+  if(!pop)return;
+  pop.querySelectorAll(".topic-suggest-item").forEach((el,idx)=>el.classList.toggle("active",idx===topicSuggestState.activeIndex));
+}
+function moveTopicSuggestion(delta){
+  if(!topicSuggestState.items.length)return false;
+  const len=topicSuggestState.items.length;
+  topicSuggestState.activeIndex=(topicSuggestState.activeIndex+delta+len)%len;
+  refreshTopicSuggestActive();
+  return true;
+}
+function applyTopicSuggestion(idx=topicSuggestState.activeIndex){
+  const state=topicSuggestState;
+  if(!state.input||!state.items.length)return false;
+  const topic=state.items[idx];
+  if(!topic)return false;
+  const input=state.input;
+  const before=input.value.slice(0,state.start);
+  const after=input.value.slice(state.end);
+  input.value=before+"#"+topic+after;
+  const nextPos=(before+"#"+topic).length;
+  input.focus();
+  input.setSelectionRange(nextPos,nextPos);
+  closeTopicSuggest();
+  return true;
 }
 
 function openProjectMenu(e){
@@ -1266,6 +1341,8 @@ function beginTitleEdit(wrap,id){
   const inp=document.createElement("input");
   inp.type="text";inp.className="title-input";inp.value=i.title;
   span.replaceWith(inp);inp.focus();inp.select();
+  inp.addEventListener("input",()=>updateTopicSuggest(inp));
+  inp.addEventListener("click",()=>updateTopicSuggest(inp));
   let committed=false;
   function commit(openNext=false){
     if(committed)return;
@@ -1281,14 +1358,33 @@ if(parsed.topic){
     if(openNext&&titleEditSequenceActive)setTimeout(()=>editNextSelectedIssueTitle(id),45);
     else titleEditSequenceActive=false;
   }
-  inp.addEventListener("blur",()=>commit(false));
+  inp.addEventListener("blur",()=>{setTimeout(closeTopicSuggest,120);commit(false);});
   inp.addEventListener("keydown",ev=>{
+    if(topicSuggestState.input===inp&&topicSuggestState.items.length){
+      if(ev.key==="ArrowDown"){
+        ev.preventDefault();
+        moveTopicSuggestion(1);
+        return;
+      }
+      if(ev.key==="ArrowUp"){
+        ev.preventDefault();
+        moveTopicSuggestion(-1);
+        return;
+      }
+      if(ev.key==="Enter"){
+        ev.preventDefault();
+        applyTopicSuggestion();
+        return;
+      }
+    }
     if(ev.key==="Enter"){
       ev.preventDefault();
+      closeTopicSuggest();
       commit(true);
       return;
     }
     if(ev.key==="Escape"){
+      closeTopicSuggest();
       titleEditSequenceActive=false;
       inp.value=i.title;
       committed=true;
@@ -1371,7 +1467,7 @@ function openDD(e,id,field){
 
 function closeDD(){document.getElementById("ddPop").style.display="none";ddActive=false;ddId=null;ddField=null;}
 
-document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();});
+document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();closeTopicSuggest();});
 document.addEventListener("keydown",e=>{
   const k=e.key.toLowerCase();
   if((e.metaKey||e.ctrlKey)&&k==="f"){
