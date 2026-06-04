@@ -428,7 +428,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 
 <div class="toolbar">
   <button class="btn app-action-btn" onclick="addIssueTop()">New issue</button>
-  <button class="btn ghost paste-action-btn" onclick="openPasteModal()" title="Paste issues"><i class="ti ti-clipboard-plus"></i> Paste</button>
+  <button class="btn ghost paste-action-btn" onclick="quickPasteOrOpenModal()" title="Paste issues"><i class="ti ti-clipboard-plus"></i> Paste</button>
   <div class="sw"><i class="ti ti-search"></i><input class="tb-input" placeholder="Search..." id="qSearch" oninput="render()"></div>
   <div class="sep"></div>
   <span class="tb-label">Group by:</span>
@@ -1621,6 +1621,21 @@ function openPasteModal(){
   setTimeout(()=>document.getElementById("pasteTextarea").focus(),80);
 }
 function closePasteModal(){document.getElementById("pasteOverlay").style.display="none";}
+async function quickPasteOrOpenModal(){
+  closeDD();
+  closeProjectMenu();
+  if(!navigator.clipboard?.readText){
+    openPasteModal();
+    return;
+  }
+  try{
+    const text=await navigator.clipboard.readText();
+    if(text.trim()&&handlePastedIssueText(text,{fromTable:text.includes("\t")}))return;
+    openPasteModal();
+  }catch(err){
+    openPasteModal();
+  }
+}
 function importFromPasteModal(){
   const textarea=document.getElementById("pasteTextarea");
   if(!textarea.value.trim()){
