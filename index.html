@@ -211,8 +211,10 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .confirm-box p{margin-bottom:16px;font-size:14px;line-height:1.5;color:var(--text-2)}
 .confirm-box h3{margin-bottom:8px;font-size:15px}
 /* toast */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:#1a1a2e;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:500;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--purple);color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;font-weight:700;z-index:500;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(97,97,214,.28)}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.warn{background:#f59e0b;box-shadow:0 8px 24px rgba(245,158,11,.24)}
+.toast.error{background:#e24b4a;box-shadow:0 8px 24px rgba(226,75,74,.24)}
 .hotkey-sections{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;font-size:13px}
 .hotkey-section{display:flex;flex-direction:column;gap:8px;min-width:0}
 .hotkey-section-title{font-size:11px;font-weight:800;color:var(--text-2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
@@ -522,7 +524,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
             <span class="hotkey-key">⌫ / Delete</span><span>Delete selected issue(s)</span>
             <span class="hotkey-key">C</span><span>Copy & duplicate selected issue(s)</span>
             <span class="hotkey-key">#...</span><span>Type #... at the end of a title to auto-assign a topic</span>
-            <span class="hotkey-key">⌘V / Ctrl+V</span><span>Create issues from your clipboard (one line = one issue)</span>
+            <span class="hotkey-key">⌘V / Ctrl+V</span><span>Create issues from a pasted bullet list</span>
 
           </div>
         </div>
@@ -1582,14 +1584,13 @@ function handlePasteIssues(e){
   if(pasted)e.preventDefault();
 }
 function handlePastedIssueText(text){
-  if(!text.trim())return;
-  const lines=text
-    .split(/\r?\n/)
-    .map(normalizePastedIssueLine)
-    .filter(Boolean);
-  if(lines.length<2)return false;
-
-  pasteIssuesFromLines(lines);
+  const parsed=parsePastedIssues(text);
+  if(!parsed.items.length)return false;
+  if(parsed.needsConfirm&&!confirm(parsed.message)){
+    toast("Paste cancelled");
+    return true;
+  }
+  pasteIssuesFromItems(parsed.items);
   return true;
 }
 async function pasteIssuesFromClipboard(){
@@ -1599,15 +1600,117 @@ async function pasteIssuesFromClipboard(){
   }
   try{
     const text=await navigator.clipboard.readText();
-    if(!handlePastedIssueText(text))toast("Clipboard has no multi-line issue list");
+    handlePastedIssueText(text);
   }catch(err){
     toast("Clipboard access blocked");
   }
 }
 function normalizePastedIssueLine(line){
-  return String(line||"")
-    .replace(/^\s*(?:[-*+]\s+(?:\[[ xX]\]\s*)?|\d+[.)]\s+)/,"")
+  return cleanPastedLineText(line)
+    .replace(/^\s*(?:[-*+•‣◦⁃∙]\s*(?:\[[ xX]\]\s*)?|\d+[A-Za-z]?(?:[.)]\s*|\s+))/,"")
     .trim();
+}
+function cleanPastedLineText(line){
+  return String(line||"").replace(/[\u200B-\u200D\u2060\uFEFF]/g,"");
+}
+function getPasteIndent(line){
+  const match=String(line||"").match(/^(\s*)/);
+  return (match?.[1]||"").replace(/\t/g,"  ").length;
+}
+function getPasteListItem(line){
+  const cleaned=cleanPastedLineText(line);
+  const match=cleaned.match(/^(\s*)(?:(?<bullet>[-*+•‣◦⁃∙])\s*(?:\[[ xX]\]\s*)?|(?<number>\d+)(?<suffix>[A-Za-z]?)(?:(?<delimiter>[.)])\s*|\s+))(?<text>.+)$/);
+  if(!match)return null;
+  const groups=match.groups||{};
+  const isNumber=groups.number!=null;
+  return {
+    indent:getPasteIndent(match[1]||""),
+    text:String(groups.text||"").trim(),
+    kind:isNumber?"number":"bullet",
+    number:isNumber?Number(groups.number):null,
+    hasDelimiter:Boolean(groups.delimiter)
+  };
+}
+function makePasteItem(title){
+  const parsed=parseTitleTopic(title);
+  return {
+    title:parsed.title||String(title||"").trim(),
+    topic:parsed.topic||"",
+    descLines:[]
+  };
+}
+function parsePastedIssues(text){
+  const lines=String(text||"").replace(/\r\n/g,"\n").split("\n").filter(line=>line.trim());
+  if(lines.length<2)return {items:[],needsConfirm:false,message:""};
+
+  const parsedLines=lines.map(line=>({
+    raw:line,
+    indent:getPasteIndent(line),
+    listItem:getPasteListItem(line)
+  }));
+  const listLines=parsedLines.filter(line=>line.listItem&&line.listItem.text);
+
+  if(listLines.length<2){
+    if(lines.length<=8&&lines.every(line=>cleanPastedLineText(line).trim().length<=180)){
+      return {
+        items:lines.map(line=>makePasteItem(normalizePastedIssueLine(line))).filter(item=>item.title),
+        needsConfirm:false,
+        message:""
+      };
+    }
+    toast("Paste blocked: text does not look like a bullet list","error");
+    return {items:[],needsConfirm:false,message:""};
+  }
+
+  const topIndent=Math.min(...listLines.map(line=>line.listItem.indent));
+  const topListLines=listLines.filter(line=>line.listItem.indent===topIndent);
+  if(lines.length>20&&topListLines.length<Math.max(5,Math.ceil(lines.length*.35))){
+    toast("Paste blocked: text does not look like a bullet list","error");
+    return {items:[],needsConfirm:false,message:""};
+  }
+  const onlyBareNumbered=topListLines.every(line=>line.listItem.kind==="number"&&!line.listItem.hasDelimiter);
+  if(onlyBareNumbered){
+    const isSequential=topListLines.every((line,idx)=>line.listItem.number===idx+1);
+    if(!isSequential){
+      toast("Paste blocked: text does not look like a bullet list","error");
+      return {items:[],needsConfirm:false,message:""};
+    }
+  }
+
+  const items=[];
+  let current=null;
+  let seenTopLevelListItem=false;
+
+  parsedLines.forEach(line=>{
+    const item=line.listItem;
+    if(item&&item.indent===topIndent){
+      seenTopLevelListItem=true;
+      current=makePasteItem(item.text);
+      items.push(current);
+      return;
+    }
+    if(!item&&!seenTopLevelListItem&&line.indent<=topIndent){
+      current=makePasteItem(line.raw.trim());
+      items.push(current);
+      return;
+    }
+    if(!current)return;
+    if(item){
+      current.descLines.push(normalizePastedIssueLine(item.text));
+      return;
+    }
+    if(line.indent>topIndent){
+      current.descLines.push(line.raw.trim());
+    }
+  });
+
+  if(!items.length)return {items:[],needsConfirm:false,message:""};
+  const needsConfirm=items.length>20||lines.length>40;
+  return {
+    items,
+    needsConfirm,
+    message:`Paste contains ${items.length} issues and ${lines.length} lines.\n\nImport them into this project?`
+  };
 }
 function makeIssueFromTitle(rawTitle){
   const f=getFilter();
@@ -1625,8 +1728,15 @@ function makeIssueFromTitle(rawTitle){
     desc:""
   };
 }
-function pasteIssuesFromLines(lines){
-  const newIssues=lines.map(makeIssueFromTitle);
+function makeIssueFromPasteItem(item){
+  const issue=makeIssueFromTitle(item.title);
+  if(item.topic)issue.topic=item.topic;
+  issue.desc=(item.descLines||[]).filter(Boolean).join("\n");
+  return issue;
+}
+function pasteIssuesFromItems(items){
+  const newIssues=items.map(makeIssueFromPasteItem);
+  if(!newIssues.length)return;
   issues=[...newIssues,...issues];
   selectedIds=new Set(newIssues.map(i=>i.id));
   lastSelectedId=newIssues[newIssues.length-1]?.id||null;
@@ -1872,9 +1982,21 @@ function importJSON(e){
   e.target.value="";
 }
 
-function toast(msg){
-  const t=document.getElementById("toast");t.textContent=msg;t.classList.add("on");
-  setTimeout(()=>t.classList.remove("on"),2500);
+function getToastTone(msg){
+  const text=String(msg||"").toLowerCase();
+  if(text.includes("failed")||text.includes("error")||text.includes("blocked")||text.includes("⚠️"))return"error";
+  if(text.includes("no ")||text.includes("not ")||text.includes("cancelled")||text.includes("keep at least")||text.includes("cleared"))return"warn";
+  return"";
+}
+function toast(msg,tone){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.remove("warn","error");
+  const resolvedTone=tone||getToastTone(msg);
+  if(resolvedTone)t.classList.add(resolvedTone);
+  t.classList.add("on");
+  clearTimeout(toast._timer);
+  toast._timer=setTimeout(()=>t.classList.remove("on"),3700);
 }
 function esc(s){if(s==null)return"";return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
 function escAttr(s){return esc(s).replace(/`/g,"&#96;");}
