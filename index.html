@@ -1621,19 +1621,24 @@ function openPasteModal(){
   setTimeout(()=>document.getElementById("pasteTextarea").focus(),80);
 }
 function closePasteModal(){document.getElementById("pasteOverlay").style.display="none";}
+let pasteActionBusy=false;
 async function quickPasteOrOpenModal(){
+  if(pasteActionBusy)return;
+  pasteActionBusy=true;
   closeDD();
   closeProjectMenu();
-  if(!navigator.clipboard?.readText){
-    openPasteModal();
-    return;
-  }
   try{
+    if(!navigator.clipboard?.readText){
+      openPasteModal();
+      return;
+    }
     const text=await navigator.clipboard.readText();
     if(text.trim()&&handlePastedIssueText(text,{fromTable:text.includes("\t")}))return;
     openPasteModal();
   }catch(err){
     openPasteModal();
+  }finally{
+    setTimeout(()=>{pasteActionBusy=false;},350);
   }
 }
 function importFromPasteModal(){
