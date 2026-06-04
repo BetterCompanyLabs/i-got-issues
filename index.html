@@ -1369,7 +1369,8 @@ function handleRowDoubleClick(e,id){
   openDesc(id);
 }
 function handleRowClick(e,id){
-  if(!window.matchMedia?.("(pointer: coarse)").matches)return;
+  const mobileLike=window.matchMedia?.("(pointer: coarse)").matches||window.innerWidth<=760;
+  if(!mobileLike)return;
   if(e.target.closest("button,input,.td-badge,.td-who,.td-due,.badge-x,.del-btn,.topic-remove,.title-input"))return;
   e.preventDefault();
   const wrap=e.currentTarget.querySelector(".title-wrap");
