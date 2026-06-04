@@ -72,7 +72,7 @@
 :root[data-theme="light"] .project-popup{background:#fff!important;border-color:#e5e5e5!important}
 .theme-toggle{width:34px;height:30px;justify-content:center;padding:6px 9px}
 .theme-toggle i{font-size:16px}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;touch-action:manipulation}
 /* topbar */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:12px;height:52px;position:sticky;top:0;z-index:60;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .topbar-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;color:var(--purple)}
@@ -305,6 +305,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   .toolbar{top:50px;min-height:50px}
   .tb-input{width:150px}
   .tb-sel{max-width:130px}
+  input[type=text],textarea,.tb-input,.tb-sel,.dd-text-input,.title-input{font-size:16px}
   .board{padding:10px 8px}
   .grp-head{padding:9px 10px}
   .grp{border-radius:8px}
@@ -1099,7 +1100,7 @@ function renderRow(i){
   const dueLabel=due?formatDueDate(due):"";
   const who=i.who?`<span class="who-avatar" title="${esc(i.who)}">${esc(i.who.slice(0,2).toUpperCase())}</span>`:`<span class="who-empty"><i class="ti ti-user" style="font-size:13px"></i></span>`;
   const done=status==="Done"?"text-decoration:line-through;opacity:.45":"";
-  return`<tr class="irow${selectedIds.has(i.id)?" selected":""}" data-id="${i.id}" draggable="true" onclick="handleRowClick(event,'${i.id}')" ondblclick="handleRowDoubleClick(event,'${i.id}')" ondragstart="dragStart(event,'${i.id}')" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropIssue(event,'${i.id}')" ondragend="dragEnd(event)">
+  return`<tr class="irow${selectedIds.has(i.id)?" selected":""}" data-id="${i.id}" draggable="true" onpointerup="handleRowPointerUp(event,'${i.id}')" ondblclick="handleRowDoubleClick(event,'${i.id}')" ondragstart="dragStart(event,'${i.id}')" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropIssue(event,'${i.id}')" ondragend="dragEnd(event)">
     <td class="td-cb"><input type="checkbox" ${selectedIds.has(i.id)?"checked":""} onclick="handleCheckboxClick(event,'${i.id}')"></td>
     <td class="td-title">
       <div class="title-wrap">
@@ -1368,11 +1369,13 @@ function handleRowDoubleClick(e,id){
   e.preventDefault();
   openDesc(id);
 }
-function handleRowClick(e,id){
+function handleRowPointerUp(e,id){
   const mobileLike=window.matchMedia?.("(pointer: coarse)").matches||window.innerWidth<=760;
   if(!mobileLike)return;
+  if(e.pointerType&&e.pointerType==="mouse")return;
   if(e.target.closest("button,input,.td-badge,.td-who,.td-due,.badge-x,.del-btn,.topic-remove,.title-input"))return;
   e.preventDefault();
+  e.stopPropagation();
   const wrap=e.currentTarget.querySelector(".title-wrap");
   beginTitleEdit(wrap,id);
 }
