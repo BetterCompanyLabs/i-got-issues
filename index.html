@@ -518,6 +518,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
           <div class="hotkey-section-title">Create & Edit</div>
           <div class="hotkey-grid">
             <span class="hotkey-key">+ / N</span><span>Create new issue</span>
+            <span class="hotkey-key">⌘V / Ctrl+V</span><span>Paste multiple lines as issues</span>
             <span class="hotkey-key">Enter</span><span>Edit title of selected issue</span>
             <span class="hotkey-key">#...</span><span>Type #... at the end of a title to auto-assign a topic</span>
             <span class="hotkey-key">⌫ / Delete</span><span>Delete selected issue(s)</span>
@@ -1508,8 +1509,14 @@ function openDD(e,id,field){
 function closeDD(){document.getElementById("ddPop").style.display="none";ddActive=false;ddId=null;ddField=null;}
 
 document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();closeTopicSuggest();});
+document.addEventListener("paste",handlePasteIssues);
 document.addEventListener("keydown",e=>{
   const k=e.key.toLowerCase();
+  if((e.metaKey||e.ctrlKey)&&k==="v"&&!isTypingTarget(e.target)&&!anyModalOpen()&&!issues.length){
+    e.preventDefault();
+    pasteIssuesFromClipboard();
+    return;
+  }
   if((e.metaKey||e.ctrlKey)&&k==="f"){
     e.preventDefault();
     const search=document.getElementById("qSearch");
@@ -1566,6 +1573,66 @@ function anyModalOpen(){
   return document.getElementById("descOverlay").style.display!=="none"||
          document.getElementById("confirmOverlay").style.display!=="none"||
          document.getElementById("hotkeyOverlay").style.display!=="none"||ddActive||projectMenuOpen;
+}
+function handlePasteIssues(e){
+  if(isTypingTarget(e.target)||anyModalOpen())return;
+  const text=e.clipboardData?.getData("text/plain")||"";
+  const pasted=handlePastedIssueText(text);
+  if(pasted)e.preventDefault();
+}
+function handlePastedIssueText(text){
+  if(!text.trim())return;
+  const lines=text
+    .split(/\r?\n/)
+    .map(normalizePastedIssueLine)
+    .filter(Boolean);
+  if(lines.length<2)return false;
+
+  pasteIssuesFromLines(lines);
+  return true;
+}
+async function pasteIssuesFromClipboard(){
+  if(!navigator.clipboard?.readText){
+    toast("Clipboard paste is not available");
+    return;
+  }
+  try{
+    const text=await navigator.clipboard.readText();
+    if(!handlePastedIssueText(text))toast("Clipboard has no multi-line issue list");
+  }catch(err){
+    toast("Clipboard access blocked");
+  }
+}
+function normalizePastedIssueLine(line){
+  return String(line||"")
+    .replace(/^\s*(?:[-*+]\s+(?:\[[ xX]\]\s*)?|\d+[.)]\s+)/,"")
+    .trim();
+}
+function makeIssueFromTitle(rawTitle){
+  const f=getFilter();
+  const parsed=parseTitleTopic(rawTitle);
+  return {
+    id:uid(),
+    title:parsed.title||"New Issue",
+    status:f.st||"Open",
+    priority:f.pr||"Medium",
+    topic:parsed.topic||f.to||"",
+    effort:"",
+    who:"",
+    dueDate:"",
+    done:false,
+    desc:""
+  };
+}
+function pasteIssuesFromLines(lines){
+  const newIssues=lines.map(makeIssueFromTitle);
+  issues=[...newIssues,...issues];
+  selectedIds=new Set(newIssues.map(i=>i.id));
+  lastSelectedId=newIssues[newIssues.length-1]?.id||null;
+  selectionAnchorId=newIssues[0]?.id||null;
+  persist();
+  render();
+  toast(`${newIssues.length} issues pasted ✓`);
 }
 function handleHotkeys(e){
   if(isTypingTarget(e.target)||anyModalOpen())return;
