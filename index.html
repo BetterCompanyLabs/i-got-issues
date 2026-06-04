@@ -1580,11 +1580,12 @@ function anyModalOpen(){
 function handlePasteIssues(e){
   if(isTypingTarget(e.target)||anyModalOpen())return;
   const text=e.clipboardData?.getData("text/plain")||"";
-  const pasted=handlePastedIssueText(text);
+  const html=e.clipboardData?.getData("text/html")||"";
+  const pasted=handlePastedIssueText(text,{fromTable:/<table[\s>]/i.test(html)||text.includes("\t")});
   if(pasted)e.preventDefault();
 }
-function handlePastedIssueText(text){
-  const parsed=parsePastedIssues(text);
+function handlePastedIssueText(text,opts={}){
+  const parsed=parsePastedIssues(text,opts);
   if(!parsed.items.length)return false;
   if(parsed.needsConfirm&&!confirm(parsed.message)){
     toast("Paste cancelled");
@@ -1639,7 +1640,25 @@ function makePasteItem(title){
     descLines:[]
   };
 }
-function parsePastedIssues(text){
+function getCompactRowItems(lines,fromTable=false){
+  const rows=lines
+    .map(line=>cleanPastedLineText(line).split("\t").map(cell=>cell.trim()).find(Boolean)||"")
+    .filter(Boolean);
+  if(rows.length<2)return [];
+
+  const maxRows=fromTable?100:20;
+  if(rows.length>maxRows)return [];
+  if(rows.some(row=>row.length>180))return [];
+
+  const avgLength=rows.reduce((sum,row)=>sum+row.length,0)/rows.length;
+  const sentenceLikeRows=rows.filter(row=>/[.!?]$/.test(row)).length;
+  if(!fromTable&&avgLength>90)return [];
+  if(!fromTable&&rows.length>12&&avgLength>82)return [];
+  if(!fromTable&&rows.length>8&&sentenceLikeRows/rows.length>.45)return [];
+
+  return rows.map(row=>makePasteItem(normalizePastedIssueLine(row))).filter(item=>item.title);
+}
+function parsePastedIssues(text,opts={}){
   const lines=String(text||"").replace(/\r\n/g,"\n").split("\n").filter(line=>line.trim());
   if(lines.length<2)return {items:[],needsConfirm:false,message:""};
 
@@ -1651,6 +1670,15 @@ function parsePastedIssues(text){
   const listLines=parsedLines.filter(line=>line.listItem&&line.listItem.text);
 
   if(listLines.length<2){
+    const rowItems=getCompactRowItems(lines,Boolean(opts.fromTable));
+    if(rowItems.length){
+      const needsConfirm=rowItems.length>20;
+      return {
+        items:rowItems,
+        needsConfirm,
+        message:`Your clipboard contains ${lines.length} rows.\n\nI can create ${rowItems.length} issue${rowItems.length===1?"":"s"} from it.\n\nImport them into this project?`
+      };
+    }
     if(lines.length<=8&&lines.every(line=>cleanPastedLineText(line).trim().length<=180)){
       return {
         items:lines.map(line=>makePasteItem(normalizePastedIssueLine(line))).filter(item=>item.title),
@@ -1706,10 +1734,11 @@ function parsePastedIssues(text){
 
   if(!items.length)return {items:[],needsConfirm:false,message:""};
   const needsConfirm=items.length>20||lines.length>40;
+  const descCount=items.filter(item=>item.descLines?.length).length;
   return {
     items,
     needsConfirm,
-    message:`Paste contains ${items.length} issues and ${lines.length} lines.\n\nImport them into this project?`
+    message:`Your clipboard contains ${lines.length} lines.\n\nI can create ${items.length} issue${items.length===1?"":"s"} and ${descCount} description${descCount===1?"":"s"} from it.\n\nImport them into this project?`
   };
 }
 function makeIssueFromTitle(rawTitle){
@@ -1743,7 +1772,8 @@ function pasteIssuesFromItems(items){
   selectionAnchorId=newIssues[0]?.id||null;
   persist();
   render();
-  toast(`${newIssues.length} issues pasted ✓`);
+  const descCount=newIssues.filter(issue=>issue.desc).length;
+  toast(`${newIssues.length} issue${newIssues.length===1?"":"s"} pasted ✓${descCount?` · ${descCount} description${descCount===1?"":"s"}`:""}`);
 }
 function handleHotkeys(e){
   if(isTypingTarget(e.target)||anyModalOpen())return;
