@@ -43,7 +43,7 @@
 :root[data-theme="dark"] .irow:hover{background:#2a2a45!important}
 :root[data-theme="dark"] .irow.selected{background:#34345f!important;color:#e8e8f0!important}
 :root[data-theme="dark"] .irow.selected .title-text{color:#e8e8f0!important}
-:root[data-theme="dark"] .grp-head{background:#252540!important;border-color:#3a3a5c}
+:root[data-theme="dark"] .grp-head{background:var(--grp-head-bg,#252540)!important;border-color:#3a3a5c}
 :root[data-theme="dark"] .add-row-btn:hover{background:#2a2a45!important}
 :root[data-theme="dark"] .dd-popup{background:#252540!important;border-color:#3a3a5c!important}
 :root[data-theme="dark"] .dd-item:hover{background:#2a2a45!important}
@@ -58,7 +58,7 @@
 :root[data-theme="light"] .badge-empty{background:#f5f5f5!important;color:#bbb!important}
 :root[data-theme="light"] .hdr-row th{background:#fafafa!important;color:#666!important}
 :root[data-theme="light"] .irow:hover{background:#f8f8ff!important}
-:root[data-theme="light"] .grp-head{background:#fff!important;border-color:#e5e5e5!important}
+:root[data-theme="light"] .grp-head{background:var(--grp-head-bg,#fff)!important;border-color:#e5e5e5!important}
 :root[data-theme="light"] .add-row-btn:hover{background:#f0f0ff!important}
 :root[data-theme="light"] .dd-popup{background:#fff!important;border-color:#e5e5e5!important}
 :root[data-theme="light"] .dd-item:hover{background:#f5f5f7!important}
@@ -73,7 +73,17 @@
 :root[data-theme="light"] .project-popup{background:#fff!important;border-color:#e5e5e5!important}
 .theme-toggle{width:34px;height:30px;justify-content:center;padding:6px 9px}
 .theme-toggle i{font-size:16px}
+.settings-toggle{width:34px;height:30px;justify-content:center;padding:6px 9px}
+.settings-toggle i{font-size:16px}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;touch-action:manipulation;padding-bottom:var(--footer-h)}
+body.font-code .board{font-family:'SF Mono','Cascadia Code','JetBrains Mono','Fira Code','Menlo','Consolas',monospace}
+body.font-code .board .title-text,
+body.font-code .board .title-input{font-size:12px}
+body.font-code .board .badge,
+body.font-code .board .badge-empty,
+body.font-code .board .due-pill,
+body.font-code .board .add-row-btn{font-size:11px}
+body.font-code .board .grp-name{font-size:12px}
 body.hotkey-strip-expanded{padding-bottom:calc(var(--footer-h) + var(--hotkey-strip-h))}
 /* topbar */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:12px;height:52px;position:sticky;top:0;z-index:60;box-shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -116,9 +126,14 @@ body.hotkey-strip-expanded{padding-bottom:calc(var(--footer-h) + var(--hotkey-st
   /* group */
 .grp{margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.04);width:100%}
 .grp{overflow-x:auto;overflow-y:hidden}
-.grp-head{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background .1s}
-.grp-head:hover{background:var(--bg)}
+.grp-head{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--grp-head-bg,var(--surface));border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background .1s}
+.grp-head:hover{background:var(--grp-head-bg,var(--bg))}
+.grp-head.has-group-bg{color:#1a1a2e}
+.grp-head.has-group-bg .grp-name{color:#1a1a2e}
+.grp-head.has-group-bg .grp-cnt{color:#666;background:rgba(255,255,255,.55)}
+.grp-head.has-group-bg .chev{color:#666}
 .grp-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.grp-dot.topic-dot{width:9px;height:9px;border-radius:50%;background:#6161d6!important}
 .grp-name{font-size:13px;font-weight:600}
 .grp-cnt{font-size:11px;color:var(--text-2);background:var(--bg);padding:1px 8px;border-radius:10px;font-weight:500}
 .chev{margin-left:auto;font-size:14px;color:var(--text-2);transition:transform .15s}
@@ -136,6 +151,9 @@ body.hotkey-strip-expanded .irow{scroll-margin-bottom:calc(var(--footer-h) + var
 .irow:last-child{border-bottom:none}
 .irow td{border-right:none;padding:0;vertical-align:middle;height:40px}
 .irow td:last-child{border-right:none}
+body.issue-dividers .irow{border-bottom:1px solid var(--border)}
+body.issue-dividers .irow td{border-right:1px solid var(--border)}
+body.issue-dividers .irow td:last-child{border-right:none}
 .td-cb{width:40px;text-align:center;padding:0 10px}
 .td-cb input,.group-select{accent-color:var(--purple);cursor:pointer;width:13px;height:13px}
 .td-title{min-width:420px;width:auto;padding:0}
@@ -267,7 +285,38 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .project-trash:hover{opacity:1;color:#e24b4a;background:#fde8e8}
 .project-new{display:flex;align-items:center;gap:6px;width:100%;border:none;background:transparent;color:var(--purple);font-weight:600;cursor:pointer;padding:9px 8px;border-radius:6px;font-family:inherit;font-size:13px;text-align:left}
 .project-new:hover{background:var(--purple-light)}
+.settings-popup{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:1000;width:292px;padding:8px;display:none}
+.settings-item{display:flex;align-items:center;gap:9px;width:100%;border:none;background:transparent;color:var(--text);cursor:pointer;padding:9px 8px;border-radius:6px;font-family:inherit;font-size:13px;text-align:left}
+.settings-item:hover{background:var(--bg)}
+.settings-item i{font-size:16px;color:var(--text-2)}
+.settings-item span{flex:1}
+.settings-item.muted{color:var(--text-2);cursor:default}
+.settings-item.muted:hover{background:transparent}
+.settings-item.danger{color:#e24b4a}
+.settings-item.danger i{color:#e24b4a}
+.settings-divider{border-top:1px solid var(--border);margin:5px 0}
+.settings-appearance{display:none;padding:6px 8px 8px;border-radius:8px;background:var(--bg);margin:4px 0}
+.settings-appearance.on{display:block}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;font-size:12px;color:var(--text)}
+.settings-row-label{display:flex;flex-direction:column;gap:2px}
+.settings-row-label strong{font-size:12px}
+.settings-row-label span{font-size:12px;color:var(--text);font-weight:800}
+.switch{position:relative;width:34px;height:20px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;border-radius:999px;background:var(--border);cursor:pointer;transition:background .15s}
+.switch span::before{content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.22);transition:transform .15s}
+.switch input:checked+span{background:var(--purple)}
+.switch input:checked+span::before{transform:translateX(14px)}
+.font-choice{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:3px}
+.font-choice button{border:none;background:transparent;color:var(--text-2);border-radius:5px;padding:4px 8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.font-choice button.active{background:var(--purple-light);color:var(--purple)}
+.font-choice .font-basic-option{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.font-choice .font-code-option{font-family:'SF Mono','Cascadia Code','JetBrains Mono','Fira Code','Menlo','Consolas',monospace;font-size:11px}
 @media(prefers-color-scheme:dark){.project-popup{background:#252540;border-color:#3a3a5c}.project-item:hover{background:#2a2a45}.project-item.active{background:#3a3460}.project-trash:hover{background:#3a2430}.due-pill{background:#2a2a45;color:#9999bb}.due-pill.set{background:#34345f;color:#d8d8ff}.due-pill.empty{background:#2a2a45;color:#666}}
+:root[data-theme="dark"] .settings-popup{background:#252540!important;border-color:#3a3a5c!important}
+:root[data-theme="dark"] .settings-item:hover{background:#2a2a45!important}
+:root[data-theme="dark"] .settings-appearance{background:#1e1e38!important}
+:root[data-theme="dark"] .font-choice{background:#252540!important;border-color:#3a3a5c!important}
 
 /* empty */
 .empty-board{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;color:var(--text-2)}
@@ -338,7 +387,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   :root{--group-sticky-top:100px}
   body{overflow-x:hidden}
   .topbar{position:sticky;top:0}
-  .topbar .btn.ghost:not(.theme-toggle){display:none}
+  .topbar .btn.ghost:not(.theme-toggle):not(.settings-toggle){display:none}
   .topbar-logo{font-size:15px;gap:6px}
   .topbar-logo span{display:inline-block;max-width:none}
   .btn{padding:7px 11px}
@@ -467,15 +516,15 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
     <span id="totalCount" class="badge-count"></span>
   </div>
   <div style="margin-left:auto;display:flex;gap:8px">
-    <button class="btn ghost theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle dark mode"><i class="ti ti-moon"></i></button>
     <button class="btn ghost" onclick="openHotkeys()" title="Show hotkeys"><i class="ti ti-keyboard"></i> Hotkeys</button>
-    <button class="btn ghost" onclick="exportJSON()" title="Export"><i class="ti ti-download"></i> Export</button>
-<button class="btn ghost" onclick="triggerImport()" title="Import JSON"><i class="ti ti-upload"></i> Import
-</button>    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+    <button class="btn ghost theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle dark mode"><i class="ti ti-moon"></i></button>
+    <button class="btn ghost settings-toggle" onclick="openSettingsMenu(event)" title="Settings"><i class="ti ti-settings"></i></button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
   </div>
 </div>
 
 <div class="project-popup" id="projectPop"></div>
+<div class="settings-popup" id="settingsPop" onmouseleave="closeSettingsMenu()"></div>
 
 <div class="toolbar">
   <button class="btn app-action-btn" onclick="addIssueTop()">New issue</button>
@@ -708,6 +757,8 @@ let collapsed={};
 let descEditId=null;
 let ddActive=false;
 let projectMenuOpen=false;
+let settingsMenuOpen=false;
+let appearancePanelOpen=false;
 let topicSuggestState={input:null,items:[],activeIndex:0,start:0,end:0};
 const STORAGE_KEY="issue_tracker_v1"; // legacy single-board storage
 const PROJECTS_KEY="easy_issues_projects_v1";
@@ -715,11 +766,19 @@ const ACTIVE_PROJECT_KEY="easy_issues_active_project_v1";
 const COLL_KEY="issue_tracker_collapsed_v1";
 const THEME_KEY="i_got_issues_theme_v1";
 const HOTKEY_STRIP_KEY="i_got_issues_hotkey_strip_v1";
+const ISSUE_DIVIDERS_KEY="i_got_issues_issue_dividers_v1";
+const FONT_MODE_KEY="i_got_issues_font_mode_v1";
 
 function applySavedTheme(){
   const saved=localStorage.getItem(THEME_KEY);
   if(saved==="dark"||saved==="light")document.documentElement.setAttribute("data-theme",saved);
   updateThemeButton();
+}
+function applyAppearanceSettings(){
+  const dividers=localStorage.getItem(ISSUE_DIVIDERS_KEY)==="on";
+  const fontMode=localStorage.getItem(FONT_MODE_KEY)==="code"?"code":"default";
+  document.body.classList.toggle("issue-dividers",dividers);
+  document.body.classList.toggle("font-code",fontMode==="code");
 }
 function getEffectiveTheme(){
   const explicit=document.documentElement.getAttribute("data-theme");
@@ -759,6 +818,7 @@ if(window.matchMedia){
 
 function load(){
   applySavedTheme();
+  applyAppearanceSettings();
   loadProjects();
   migrateStatusLabels();
   loadCollapsedForActiveProject();
@@ -904,6 +964,7 @@ function applyTopicSuggestion(idx=topicSuggestState.activeIndex){
 function openProjectMenu(e){
   e.stopPropagation();
   closeDD();
+  closeSettingsMenu();
   const pop=document.getElementById("projectPop");
   renderProjectMenu();
   const rect=e.currentTarget.getBoundingClientRect();
@@ -925,6 +986,71 @@ function renderProjectMenu(){
       <button class="project-trash" onclick="deleteProject(event,'${p.id}')" title="Delete project"><i class="ti ti-trash"></i></button>
     </div>`).join("")+
     `<button class="project-new" onclick="createProject()"><i class="ti ti-plus"></i> New project</button>`;
+}
+function openSettingsMenu(e){
+  e.stopPropagation();
+  closeDD();
+  closeProjectMenu();
+  const pop=document.getElementById("settingsPop");
+  renderSettingsMenu();
+  const rect=e.currentTarget.getBoundingClientRect();
+  pop.style.display="block";
+  let left=rect.right-292;
+  let top=rect.bottom+6;
+  if(left<8)left=8;
+  if(left+292>window.innerWidth-8)left=window.innerWidth-300;
+  pop.style.left=left+"px";pop.style.top=top+"px";
+  settingsMenuOpen=true;
+}
+function closeSettingsMenu(){
+  const pop=document.getElementById("settingsPop");
+  if(pop)pop.style.display="none";
+  settingsMenuOpen=false;
+  appearancePanelOpen=false;
+}
+function renderSettingsMenu(){
+  const pop=document.getElementById("settingsPop");
+  const dividers=document.body.classList.contains("issue-dividers");
+  const codeFont=document.body.classList.contains("font-code");
+  pop.innerHTML=`
+    <button class="settings-item muted" type="button"><i class="ti ti-user-circle"></i><span>Profile</span><small>Soon</small></button>
+    <div class="settings-divider"></div>
+    <button class="settings-item" type="button" onclick="exportJSON();closeSettingsMenu();"><i class="ti ti-download"></i><span>Export</span></button>
+    <button class="settings-item" type="button" onclick="triggerImport();closeSettingsMenu();"><i class="ti ti-upload"></i><span>Import</span></button>
+    <div class="settings-divider"></div>
+    <button class="settings-item" type="button" onclick="toggleAppearancePanel(event);"><i class="ti ti-palette"></i><span>Appearance</span><i class="ti ti-chevron-${appearancePanelOpen?"up":"down"}"></i></button>
+    <div class="settings-appearance${appearancePanelOpen?" on":""}" onclick="event.stopPropagation()">
+      <div class="settings-row">
+        <div class="settings-row-label"><span>Show row & cell lines</span></div>
+        <label class="switch"><input type="checkbox" ${dividers?"checked":""} onchange="setIssueDividers(this.checked)"><span></span></label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label"><span>Choose your font</span></div>
+        <div class="font-choice">
+          <button type="button" class="font-basic-option ${!codeFont?"active":""}" onclick="setFontMode('default')">Basic</button>
+          <button type="button" class="font-code-option ${codeFont?"active":""}" onclick="setFontMode('code')">Code</button>
+        </div>
+      </div>
+    </div>
+    <div class="settings-divider"></div>
+    <button class="settings-item danger" type="button" onclick="toast('Log out is not available yet','warn');closeSettingsMenu();"><i class="ti ti-logout"></i><span>Log Out</span></button>
+  `;
+}
+function toggleAppearancePanel(e){
+  e.stopPropagation();
+  appearancePanelOpen=!appearancePanelOpen;
+  renderSettingsMenu();
+}
+function setIssueDividers(on){
+  document.body.classList.toggle("issue-dividers",on);
+  localStorage.setItem(ISSUE_DIVIDERS_KEY,on?"on":"off");
+  renderSettingsMenu();
+}
+function setFontMode(mode){
+  const next=mode==="code"?"code":"default";
+  document.body.classList.toggle("font-code",next==="code");
+  localStorage.setItem(FONT_MODE_KEY,next);
+  renderSettingsMenu();
 }
 function switchProject(id){
   if(id===activeProjectId){closeProjectMenu();return;}
@@ -1122,7 +1248,8 @@ function render(){
 
   let keys=[...allKeys];
   const order=f.grp==="status"?["Open","In Progress","Review","Blocked","Done"]:
-               f.grp==="priority"?["Critical","High","Medium","Low"]:null;
+               f.grp==="priority"?["Critical","High","Medium","Low"]:
+               f.grp==="effort"?["XS","S","M","L","XL"]:null;
   if(order)keys.sort((a,b)=>{const ia=order.indexOf(a),ib=order.indexOf(b);return(ia<0?99:ia)-(ib<0?99:ib);});
   else keys.sort();
   if(!keys.length)keys=[];
@@ -1132,8 +1259,10 @@ function render(){
     let dot=GRP_DOTS[idx%GRP_DOTS.length];
     if(f.grp==="status"&&S.status.colors[k])dot=S.status.colors[k].dot;
     if(f.grp==="priority"&&S.priority.colors[k])dot=S.priority.colors[k].dot;
+    if(f.grp==="effort"&&S.effort.colors[k])dot=S.effort.colors[k].dot;
+    if(f.grp==="topic"&&k&&k!=="—")dot="#6161d6";
     return renderGroup(k,map[k]||[],dot,k);
-  }).join("")||`<div class="empty-board"><div class="empty-card"><div class="empty-card-icon"><i class="ti ti-filter-off"></i></div><h2>No matching issues</h2><p>Nothing matches the current filters. Clear a filter or create a new issue for this view.</p><div class="empty-actions"><button class="btn ghost" onclick="document.getElementById('qSearch').value='';document.getElementById('qSt').value='';document.getElementById('qPr').value='';document.getElementById('qTo').value='';render();"><i class="ti ti-filter-off"></i> Clear filters</button><button class="btn" onclick="addIssueTop()">New issue</button></div></div></div>`;
+  }).join("")||`<div class="empty-board"><div class="empty-card"><div class="empty-card-icon"><i class="ti ti-filter-off"></i></div><h2>No matching issues</h2><p>Nothing matches the current filters. Clear a filter or create a new issue for this view.</p><div class="empty-actions"><button class="btn ghost" onclick="document.getElementById('qSearch').value='';document.getElementById('qSt').value='';document.getElementById('qPr').value='';document.getElementById('qTo').value='';render();">Clear filters</button><button class="btn" onclick="addIssueTop()">New issue</button></div></div></div>`;
   syncGroupCheckboxes();
 }
 
@@ -1142,6 +1271,7 @@ function renderGroup(name,items,dotColor,key){
   const itemIds=items.map(i=>i.id);
   const allSelected=itemIds.length>0&&itemIds.every(id=>selectedIds.has(id));
   const someSelected=itemIds.some(id=>selectedIds.has(id));
+  const groupBg=getGroupHeaderBg(key);
   const body=isColl?"":`
     <table class="tbl">
       <colgroup><col style="width:40px"><col><col style="width:93px"><col style="width:97px"><col style="width:115px"><col style="width:87px"><col style="width:101px"><col style="width:75px"><col style="width:44px"></colgroup>
@@ -1166,13 +1296,32 @@ function renderGroup(name,items,dotColor,key){
       </tbody>
     </table>`;
   return`<div class="grp">
-    <div class="grp-head" onclick="toggleGrp('${esc(key)}')">
-      <span class="grp-dot" style="background:${dotColor}"></span>
+    <div class="grp-head${groupBg?" has-group-bg":""}" style="${groupBg?`--grp-head-bg:${groupBg}`:""}" onclick="toggleGrp('${esc(key)}')">
+      ${renderGroupMarker(key,dotColor)}
       <span class="grp-name">${esc(name)}</span>
       <span class="grp-cnt">${items.length}</span>
       <i class="ti ti-chevron-down chev${isColl?" c":""}"></i>
     </div>${body}
   </div>`;
+}
+
+function getGroupHeaderBg(key){
+  return "";
+}
+function renderGroupMarker(key,dotColor){
+  if(S.priority.colors[key])return renderPriorityBars(key);
+  if(!S.status.colors[key]&&!S.effort.colors[key]&&key&&key!=="__all__"&&key!=="—")return `<span class="grp-dot topic-dot"></span>`;
+  return `<span class="grp-dot" style="background:${dotColor}"></span>`;
+}
+function softenColor(hex,percent){
+  const raw=String(hex||"").trim();
+  const match=raw.match(/^#([0-9a-f]{6})$/i);
+  if(!match)return raw;
+  const amount=Math.max(0,Math.min(100,percent))/100;
+  const num=parseInt(match[1],16);
+  const r=(num>>16)&255,g=(num>>8)&255,b=num&255;
+  const mix=v=>Math.round(v+(255-v)*amount);
+  return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
 }
 
 function renderRow(i){
@@ -1593,6 +1742,7 @@ let ddId=null,ddField=null;
 function openDD(e,id,field){
   e.stopPropagation();
   closeDD();
+  closeSettingsMenu();
   ddId=id;ddField=field;
   const i=issues.find(x=>x.id===id);
   const pop=document.getElementById("ddPop");
@@ -1661,7 +1811,7 @@ function openDD(e,id,field){
 
 function closeDD(){document.getElementById("ddPop").style.display="none";ddActive=false;ddId=null;ddField=null;}
 
-document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();closeTopicSuggest();});
+document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();if(settingsMenuOpen)closeSettingsMenu();closeTopicSuggest();});
 document.addEventListener("paste",handlePasteIssues);
 document.addEventListener("keydown",e=>{
   const k=e.key.toLowerCase();
@@ -1702,6 +1852,7 @@ const confirmOpen =
     closeConfirm();
     closeHotkeys();
     closePasteModal();
+    closeSettingsMenu();
     return;
   }
 
@@ -1727,11 +1878,12 @@ function anyModalOpen(){
   return document.getElementById("descOverlay").style.display!=="none"||
          document.getElementById("confirmOverlay").style.display!=="none"||
          document.getElementById("hotkeyOverlay").style.display!=="none"||
-         document.getElementById("pasteOverlay").style.display!=="none"||ddActive||projectMenuOpen;
+         document.getElementById("pasteOverlay").style.display!=="none"||ddActive||projectMenuOpen||settingsMenuOpen;
 }
 function openPasteModal(){
   closeDD();
   closeProjectMenu();
+  closeSettingsMenu();
   document.getElementById("pasteTextarea").value="";
   document.getElementById("pasteOverlay").style.display="flex";
   setTimeout(()=>document.getElementById("pasteTextarea").focus(),80);
@@ -1743,6 +1895,7 @@ async function quickPasteOrOpenModal(){
   pasteActionBusy=true;
   closeDD();
   closeProjectMenu();
+  closeSettingsMenu();
   try{
     if(!navigator.clipboard?.readText){
       openPasteModal();
