@@ -12,7 +12,7 @@
   --bg:#f5f5f7;--surface:#fff;--border:#e5e5e5;--border-hover:#ccc;
   --text:#1a1a2e;--text-2:#666;--text-3:#aaa;
   --radius:6px;--shadow:0 2px 12px rgba(0,0,0,.1);
-  --footer-h:44px;--hotkey-strip-h:42px;
+  --footer-h:44px;--hotkey-strip-h:42px;--group-sticky-top:96px;
 }
 @media(prefers-color-scheme:dark){
   :root{--bg:#1a1a2e;--surface:#252540;--border:#3a3a5c;--border-hover:#555;--text:#e8e8f0;--text-2:#9999bb;--text-3:#555577}
@@ -114,7 +114,7 @@ body.hotkey-strip-expanded{padding-bottom:calc(var(--footer-h) + var(--hotkey-st
   max-width:none;
   margin:0;}
   /* group */
-.grp{margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.grp{margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.04);width:100%}
 .grp{overflow-x:auto;overflow-y:hidden}
 .grp-head{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background .1s}
 .grp-head:hover{background:var(--bg)}
@@ -125,19 +125,19 @@ body.hotkey-strip-expanded{padding-bottom:calc(var(--footer-h) + var(--hotkey-st
 .chev.c{transform:rotate(-90deg)}
 /* table */
 .tbl{width:100%;border-collapse:collapse;background:var(--surface);table-layout:fixed}
-.hdr-row th{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px;padding:7px 10px;border-right:1px solid var(--border);background:#fafafa;text-align:center;white-space:nowrap}
+.hdr-row th{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px;padding:7px 10px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:#fafafa;text-align:center;white-space:nowrap}
 .hdr-row th.th-title{text-align:left;width:auto;min-width:420px}
 .hdr-row th:first-child{width:40px}
 .hdr-row th:last-child{border-right:none;width:44px}
-.irow{border-bottom:1px solid var(--border);transition:background .08s;cursor:grab}
+.irow{border-bottom:none;transition:background .08s;cursor:grab}
 .irow{scroll-margin-bottom:calc(var(--footer-h) + 16px)}
 body.hotkey-strip-expanded .irow{scroll-margin-bottom:calc(var(--footer-h) + var(--hotkey-strip-h) + 16px)}
 .irow:hover{background:#f8f8ff}
 .irow:last-child{border-bottom:none}
-.irow td{border-right:1px solid var(--border);padding:0;vertical-align:middle;height:40px}
+.irow td{border-right:none;padding:0;vertical-align:middle;height:40px}
 .irow td:last-child{border-right:none}
 .td-cb{width:40px;text-align:center;padding:0 10px}
-.td-cb input{accent-color:var(--purple);cursor:pointer;width:14px;height:14px}
+.td-cb input,.group-select{accent-color:var(--purple);cursor:pointer;width:13px;height:13px}
 .td-title{min-width:420px;width:auto;padding:0}
 .title-wrap{display:flex;align-items:center;gap:7px;padding:0 10px;height:40px}
 .title-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
@@ -301,7 +301,18 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .title-wrap{min-width:0}
 .title-text{min-width:0}
 
+@media(min-width:901px){
+  .grp{overflow:visible}
+  .grp-head{
+    position:sticky;
+    top:var(--group-sticky-top);
+    z-index:45;
+    box-shadow:0 1px 0 var(--border),0 4px 10px rgba(0,0,0,.035);
+  }
+}
+
 @media(max-width:900px){
+  :root{--group-sticky-top:104px}
   .topbar{height:auto;min-height:52px;padding:8px 10px;gap:8px}
   .topbar-logo{font-size:15px}
   .topbar-logo i{font-size:19px}
@@ -324,6 +335,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 }
 
 @media(max-width:560px){
+  :root{--group-sticky-top:100px}
   body{overflow-x:hidden}
   .topbar{position:sticky;top:0}
   .topbar .btn.ghost:not(.theme-toggle){display:none}
@@ -355,7 +367,8 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 
 
 /* --- Polished empty state + footer --- */
-.board{min-height:calc(100vh - 52px - 44px - 86px)}
+.board{min-height:calc(100vh - 52px - 44px - 86px);padding-left:18px;padding-right:18px}
+@media(max-width:900px){.board{padding-left:10px;padding-right:10px}}
 .empty-board{min-height:calc(100vh - 52px - 44px - 126px);padding:48px 20px}
 .empty-card{
   width:min(520px,100%);
@@ -428,7 +441,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .footer-links a:hover{color:var(--purple)}
 @media(max-width:640px){
   body{padding-bottom:var(--footer-h)}
-  .board{min-height:calc(100vh - 100px - 92px)}
+  .board{min-height:calc(100vh - 100px - 92px);padding-left:8px;padding-right:8px}
   .empty-board{min-height:calc(100vh - 100px - 132px);padding:28px 8px}
   .empty-card{padding:28px 20px;border-radius:14px}
   .hotkey-strip{display:none}
@@ -470,7 +483,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   <div class="sw"><i class="ti ti-search"></i><input class="tb-input" placeholder="Search..." id="qSearch" oninput="render()"></div>
   <div class="sep"></div>
   <span class="tb-label">Group by:</span>
-<select class="tb-sel" id="qGroup" onchange="render()">
+<select class="tb-sel" id="qGroup" onchange="this.blur();render()">
   <option value="none">None</option>
   <option value="status">Status</option>
   <option value="priority">Priority</option>
@@ -478,7 +491,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   <option value="effort">Effort</option>
 </select>
   <span class="tb-label">Sort by:</span>
-<select class="tb-sel" id="qSort" onchange="handleSortChange()">
+<select class="tb-sel" id="qSort" onchange="this.blur();handleSortChange()">
   <option value="manual">Manual order</option>
   <option value="title">Issue</option>
   <option value="status">Status</option>
@@ -490,15 +503,15 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 </select>
   <div class="sep"></div>
   <span class="tb-label">Filter:</span>
-  <select class="tb-sel" id="qSt" onchange="render()">
+  <select class="tb-sel" id="qSt" onchange="this.blur();render()">
     <option value="">All Statuses</option>
     <option>Open</option><option>In Progress</option><option>Review</option><option>Done</option><option>Blocked</option>
   </select>
-  <select class="tb-sel" id="qPr" onchange="render()">
+  <select class="tb-sel" id="qPr" onchange="this.blur();render()">
     <option value="">All Priorities</option>
     <option>Critical</option><option>High</option><option>Medium</option><option>Low</option>
   </select>
-  <select class="tb-sel" id="qTo" onchange="render()"><option value="">All Topics</option></select>
+  <select class="tb-sel" id="qTo" onchange="this.blur();render()"><option value="">All Topics</option></select>
 </div>
 
 <!-- paste modal -->
@@ -1077,7 +1090,6 @@ function render(){
     return true;
   });
   filtered=sortIssues(filtered,f.sort);
-  currentVisibleIds=filtered.map(i=>i.id);
 
   // update topic filter
   const toSel=document.getElementById("qTo");
@@ -1090,11 +1102,13 @@ function render(){
 
   const board=document.getElementById("board");
   if(!issues.length){
+    currentVisibleIds=[];
     board.innerHTML=`<div class="empty-board"><div class="empty-card"><div class="empty-card-icon"><span class="empty-brand-logo" aria-hidden="true"><span class="empty-brand-mouth"></span></span></div><h2>I Got Issues...</h2><p class="empty-sub">But you got them too.</p><p class="empty-copy">Leave your Markdown files alone and create your issues here.</p><div class="empty-actions"><button class="btn" onclick="addIssueTop()">New issue</button><button class="btn ghost" onclick="triggerImport()">Import JSON</button></div></div></div>`;
     return;
   }
 
   if(f.grp==="none"){
+    currentVisibleIds=collapsed.__all__?[]:filtered.map(i=>i.id);
     board.innerHTML=renderGroup("All Issues",filtered,"#6161d6","__all__");
     syncGroupCheckboxes();
     return;
@@ -1112,6 +1126,7 @@ function render(){
   if(order)keys.sort((a,b)=>{const ia=order.indexOf(a),ib=order.indexOf(b);return(ia<0?99:ia)-(ib<0?99:ib);});
   else keys.sort();
   if(!keys.length)keys=[];
+  currentVisibleIds=keys.flatMap(k=>collapsed[k]?[]:(map[k]||[]).map(i=>i.id));
 
   board.innerHTML=keys.map((k,idx)=>{
     let dot=GRP_DOTS[idx%GRP_DOTS.length];
