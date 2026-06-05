@@ -12,6 +12,7 @@
   --bg:#f5f5f7;--surface:#fff;--border:#e5e5e5;--border-hover:#ccc;
   --text:#1a1a2e;--text-2:#666;--text-3:#aaa;
   --radius:6px;--shadow:0 2px 12px rgba(0,0,0,.1);
+  --footer-h:44px;--hotkey-strip-h:42px;
 }
 @media(prefers-color-scheme:dark){
   :root{--bg:#1a1a2e;--surface:#252540;--border:#3a3a5c;--border-hover:#555;--text:#e8e8f0;--text-2:#9999bb;--text-3:#555577}
@@ -72,7 +73,8 @@
 :root[data-theme="light"] .project-popup{background:#fff!important;border-color:#e5e5e5!important}
 .theme-toggle{width:34px;height:30px;justify-content:center;padding:6px 9px}
 .theme-toggle i{font-size:16px}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;touch-action:manipulation}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;touch-action:manipulation;padding-bottom:var(--footer-h)}
+body.hotkey-strip-expanded{padding-bottom:calc(var(--footer-h) + var(--hotkey-strip-h))}
 /* topbar */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:12px;height:52px;position:sticky;top:0;z-index:60;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .topbar-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;color:var(--purple)}
@@ -128,6 +130,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .hdr-row th:first-child{width:40px}
 .hdr-row th:last-child{border-right:none;width:44px}
 .irow{border-bottom:1px solid var(--border);transition:background .08s;cursor:grab}
+.irow{scroll-margin-bottom:calc(var(--footer-h) + 16px)}
+body.hotkey-strip-expanded .irow{scroll-margin-bottom:calc(var(--footer-h) + var(--hotkey-strip-h) + 16px)}
 .irow:hover{background:#f8f8ff}
 .irow:last-child{border-bottom:none}
 .irow td{border-right:1px solid var(--border);padding:0;vertical-align:middle;height:40px}
@@ -137,6 +141,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .td-title{min-width:420px;width:auto;padding:0}
 .title-wrap{display:flex;align-items:center;gap:7px;padding:0 10px;height:40px}
 .title-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.priority-bars{display:inline-flex;align-items:flex-end;gap:1.5px;width:15px;height:14px;flex-shrink:0;color:#9ca3af}
+.priority-bars span{display:block;width:3px;border-radius:2px;background:var(--border);opacity:.95}
+.priority-bars span:nth-child(1){height:4px}
+.priority-bars span:nth-child(2){height:7px}
+.priority-bars span:nth-child(3){height:10px}
+.priority-bars span:nth-child(4){height:13px}
+.priority-bars[data-level="1"] span:nth-child(-n+1),
+.priority-bars[data-level="2"] span:nth-child(-n+2),
+.priority-bars[data-level="3"] span:nth-child(-n+3),
+.priority-bars[data-level="4"] span:nth-child(-n+4){background:currentColor}
+.priority-bars.level-low{color:#9ca3af}
+.priority-bars.level-medium{color:#3b82f6}
+.priority-bars.level-high{color:#f59e0b}
+.priority-bars.level-critical{color:#ef4444}
 .title-text{font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;padding:3px 5px;border-radius:4px;border:1.5px solid transparent}
 .title-text:hover{background:var(--bg);border-color:var(--border)}
 .title-input{font-size:13px;flex:1;border:1.5px solid var(--purple);border-radius:4px;padding:3px 6px;outline:none;font-family:inherit;background:var(--surface);color:var(--text);min-width:0;box-shadow:0 0 0 3px rgba(97,97,214,.12)}
@@ -221,6 +239,17 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .hotkey-section-title{font-size:11px;font-weight:800;color:var(--text-2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
 .hotkey-grid{display:grid;grid-template-columns:118px 1fr;gap:8px 10px;align-items:center}
 .hotkey-key{display:inline-flex;justify-content:center;align-items:center;min-width:34px;padding:3px 10px;border:1px solid var(--border);border-radius:5px;background:var(--bg);font-weight:700;color:var(--text);white-space:nowrap}
+.hotkey-strip{position:fixed;left:0;right:0;bottom:var(--footer-h);z-index:50;min-height:var(--hotkey-strip-h);border-top:1px solid var(--border);background:var(--surface);padding:8px 40px;display:flex;align-items:center;gap:12px;color:var(--text-2);font-size:12px;box-shadow:0 -1px 4px rgba(0,0,0,.04)}
+.hotkey-strip.collapsed{left:auto;right:0;bottom:var(--footer-h);min-height:0;border:1px solid var(--border);border-right:none;border-bottom:none;border-radius:8px 0 0 0;padding:5px 12px;box-shadow:0 -2px 8px rgba(0,0,0,.06)}
+.hotkey-strip-toggle{border:none;background:transparent;color:var(--purple);font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:5px 0;white-space:nowrap}
+.hotkey-strip-toggle i{font-size:14px;transition:transform .15s}
+.hotkey-strip.collapsed .hotkey-strip-toggle i{transform:rotate(-90deg)}
+.hotkey-strip-list{display:flex;align-items:center;gap:10px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.hotkey-strip-list::-webkit-scrollbar{display:none}
+.hotkey-strip.collapsed .hotkey-strip-list{display:none}
+.hotkey-chip{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0}
+.hotkey-chip kbd{font-family:inherit;font-size:11px;font-weight:900;color:var(--text);background:var(--bg);border:1px solid var(--border);border-bottom-color:var(--border-hover);border-radius:5px;padding:2px 7px;min-width:24px;text-align:center}
+.hotkey-chip span{color:var(--text-2);font-weight:600}
 @media(max-width:640px){.hotkey-sections{grid-template-columns:1fr}.hotkey-grid{grid-template-columns:110px 1fr}}
 .irow.selected{background:#f0f0ff}
 .irow.dragging{opacity:.45;cursor:grabbing}
@@ -377,7 +406,8 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   width:100%;
   max-width:none;
   margin:0;
-  padding:16px 40px 22px;
+  min-height:var(--footer-h);
+  padding:0 40px;
   border-top:1px solid var(--border);
   display:flex;
   align-items:center;
@@ -385,16 +415,24 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   gap:16px;
   color:var(--text-2);
   font-size:12px;
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:50;
+  background:var(--surface);
 }
 .footer-brand{font-weight:600}
 .footer-links{display:flex;gap:18px;align-items:center}
 .footer-links a{color:var(--text-2);text-decoration:none;font-weight:600}
 .footer-links a:hover{color:var(--purple)}
 @media(max-width:640px){
+  body{padding-bottom:var(--footer-h)}
   .board{min-height:calc(100vh - 100px - 92px)}
   .empty-board{min-height:calc(100vh - 100px - 132px);padding:28px 8px}
   .empty-card{padding:28px 20px;border-radius:14px}
-  .site-footer{flex-direction:column;text-align:center;padding:18px 12px 24px}
+  .hotkey-strip{display:none}
+  .site-footer{flex-direction:column;justify-content:center;text-align:center;padding:6px 12px}
 }
 @media(pointer:coarse){
   .paste-action-btn{display:inline-flex}
@@ -483,6 +521,24 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 
 <div class="board" id="board"></div>
 
+<div class="hotkey-strip collapsed" id="hotkeyStrip">
+  <button class="hotkey-strip-toggle" onclick="toggleHotkeyStrip()" title="Toggle quick hotkeys">
+    <i class="ti ti-chevron-down"></i>
+    <span>Hotkeys</span>
+  </button>
+  <div class="hotkey-strip-list">
+    <span class="hotkey-chip"><kbd>N / +</kbd><span>New</span></span>
+    <span class="hotkey-chip"><kbd>Enter</kbd><span>Edit</span></span>
+    <span class="hotkey-chip"><kbd>1-5</kbd><span>Toggle Status</span></span>
+    <span class="hotkey-chip"><kbd>P</kbd><span>Toggle Priority</span></span>
+    <span class="hotkey-chip"><kbd>T / W / #</kbd><span>Date = Today / +1 Week / +1 Day</span></span>
+    <span class="hotkey-chip"><kbd>Space</kbd><span>Deselect</span></span>
+    <span class="hotkey-chip"><kbd>⌘V</kbd><span>From Clipboard</span></span>
+    <span class="hotkey-chip"><kbd>Backspace</kbd><span>Delete</span></span>
+    <span class="hotkey-chip"><kbd>E</kbd><span>JSON Export</span></span>
+  </div>
+</div>
+
 <footer class="site-footer">
   <div class="footer-brand">Built by BetterCompanyLabs</div>
   <div class="footer-links">
@@ -556,6 +612,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
           <div class="hotkey-section-title">Selection & Navigation</div>
           <div class="hotkey-grid">
 <span class="hotkey-key">↑ / ↓</span><span>Move up or down through visible issues</span>
+            <span class="hotkey-key">⌘↑ / ⌘↓</span><span>Jump to first or last visible issue</span>
             <span class="hotkey-key">⌘A</span><span>Select all visible issues</span>
             <span class="hotkey-key">Space</span><span>Deselect selected issues</span>
           </div>
@@ -644,6 +701,7 @@ const PROJECTS_KEY="easy_issues_projects_v1";
 const ACTIVE_PROJECT_KEY="easy_issues_active_project_v1";
 const COLL_KEY="issue_tracker_collapsed_v1";
 const THEME_KEY="i_got_issues_theme_v1";
+const HOTKEY_STRIP_KEY="i_got_issues_hotkey_strip_v1";
 
 function applySavedTheme(){
   const saved=localStorage.getItem(THEME_KEY);
@@ -668,6 +726,20 @@ function toggleTheme(){
   localStorage.setItem(THEME_KEY,next);
   updateThemeButton();
 }
+function applyHotkeyStripState(){
+  const strip=document.getElementById("hotkeyStrip");
+  if(!strip)return;
+  const expanded=localStorage.getItem(HOTKEY_STRIP_KEY)==="expanded";
+  strip.classList.toggle("collapsed",!expanded);
+  document.body.classList.toggle("hotkey-strip-expanded",expanded);
+}
+function toggleHotkeyStrip(){
+  const strip=document.getElementById("hotkeyStrip");
+  if(!strip)return;
+  const collapsed=strip.classList.toggle("collapsed");
+  document.body.classList.toggle("hotkey-strip-expanded",!collapsed);
+  localStorage.setItem(HOTKEY_STRIP_KEY,collapsed?"collapsed":"expanded");
+}
 if(window.matchMedia){
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{if(!document.documentElement.getAttribute("data-theme"))updateThemeButton();});
 }
@@ -678,6 +750,7 @@ function load(){
   migrateStatusLabels();
   loadCollapsedForActiveProject();
   render();
+  applyHotkeyStripState();
 }
 function loadProjects(){
   try{const d=localStorage.getItem(PROJECTS_KEY);if(d)projects=JSON.parse(d)||[];}catch(e){projects=[];}
@@ -1104,7 +1177,7 @@ function renderRow(i){
     <td class="td-cb"><input type="checkbox" ${selectedIds.has(i.id)?"checked":""} onclick="handleCheckboxClick(event,'${i.id}')"></td>
     <td class="td-title">
       <div class="title-wrap">
-        <span class="title-dot" style="background:${sc.dot}"></span>
+        ${renderPriorityBars(i.priority)}
         <span class="title-text" style="${done}" onclick="startTitleEdit(event,'${i.id}')" title="${esc(i.title)}">${esc(i.title)||"<em style='opacity:.4'>Title...</em>"}</span>
 <button class="desc-btn${i.desc?" has-desc":""}" onclick="openDesc('${i.id}')" title="Description / Details">
   <i class="ti ${i.desc ? 'ti-message-circle-filled' : 'ti-message-circle'}" style="font-size:14px"></i>
@@ -1119,6 +1192,13 @@ function renderRow(i){
     <td class="td-who" onclick="openDD(event,'${i.id}','who')"><div class="badge-inner">${who}</div></td>
     <td class="td-act"><button class="del-btn" onclick="confirmDel('${i.id}')" title="Delete"><i class="ti ti-trash"></i></button></td>
   </tr>`;
+}
+
+function renderPriorityBars(priority){
+  const levels={Low:1,Medium:2,High:3,Critical:4};
+  const level=levels[priority]||1;
+  const cls=String(priority||"Low").toLowerCase();
+  return `<span class="priority-bars level-${esc(cls)}" data-level="${level}" title="${esc(priority||"Low")} priority"><span></span><span></span><span></span><span></span></span>`;
 }
 
 function toggleGrp(key){collapsed[key]=!collapsed[key];persist();render();}
@@ -1269,11 +1349,28 @@ function cyclePriorityForSelected(){
 function getTopmostSelectedVisibleId(){
   return currentVisibleIds.find(id=>selectedIds.has(id))||getSelectedIds()[0]||null;
 }
+function getBottomDockHeight(){
+  const root=getComputedStyle(document.documentElement);
+  const footer=parseFloat(root.getPropertyValue("--footer-h"))||0;
+  const hotkeys=document.body.classList.contains("hotkey-strip-expanded")?(parseFloat(root.getPropertyValue("--hotkey-strip-h"))||0):0;
+  return footer+hotkeys;
+}
+function scrollRowIntoView(id){
+  const row=document.querySelector(`.irow[data-id="${CSS.escape(id)}"]`);
+  if(!row)return null;
+  row.scrollIntoView({block:"nearest",behavior:"smooth"});
+  setTimeout(()=>{
+    const rect=row.getBoundingClientRect();
+    const safeBottom=window.innerHeight-getBottomDockHeight()-14;
+    if(rect.bottom>safeBottom)window.scrollBy({top:rect.bottom-safeBottom,behavior:"smooth"});
+    if(rect.top<96)window.scrollBy({top:rect.top-96,behavior:"smooth"});
+  },40);
+  return row;
+}
 function startTitleEditById(id){
   if(!id)return false;
-  const row=document.querySelector(`.irow[data-id="${CSS.escape(id)}"]`);
+  const row=scrollRowIntoView(id);
   if(!row)return false;
-  row.scrollIntoView({block:"nearest",behavior:"smooth"});
   setTimeout(()=>{
     const title=row.querySelector(".title-text");
     if(title)title.click();
@@ -1309,13 +1406,19 @@ function selectVisibleIssue(offset){
   lastSelectedId=nextId;
   selectionAnchorId=nextId;
   render();
-  setTimeout(()=>{
-    const row=document.querySelector(`.irow[data-id="${CSS.escape(nextId)}"]`);
-    if(row)row.scrollIntoView({block:"nearest",behavior:"smooth"});
-  },30);
+  setTimeout(()=>scrollRowIntoView(nextId),30);
 }
 function selectNextVisibleIssue(){selectVisibleIssue(1);}
 function selectPreviousVisibleIssue(){selectVisibleIssue(-1);}
+function selectVisibleEndpoint(which){
+  if(!currentVisibleIds.length){toast("No visible issues");return;}
+  const nextId=which==="last"?currentVisibleIds[currentVisibleIds.length-1]:currentVisibleIds[0];
+  selectedIds=new Set([nextId]);
+  lastSelectedId=nextId;
+  selectionAnchorId=nextId;
+  render();
+  setTimeout(()=>scrollRowIntoView(nextId),30);
+}
 function extendVisibleSelection(offset){
   if(!currentVisibleIds.length){toast("No visible issues");return;}
   let anchor=selectionAnchorId&&currentVisibleIds.includes(selectionAnchorId)?selectionAnchorId:null;
@@ -1332,10 +1435,7 @@ function extendVisibleSelection(offset){
   lastSelectedId=currentVisibleIds[nextIndex];
   selectionAnchorId=anchor;
   render();
-  setTimeout(()=>{
-    const row=document.querySelector(`.irow[data-id="${CSS.escape(lastSelectedId)}"]`);
-    if(row)row.scrollIntoView({block:"nearest",behavior:"smooth"});
-  },30);
+  setTimeout(()=>scrollRowIntoView(lastSelectedId),30);
 }
 
 function selectAllVisible(){
@@ -1489,7 +1589,8 @@ function openDD(e,id,field){
       const col=cfg.colors?.[opt];
       const el=document.createElement("div");
       el.className="dd-item"+(i[field]===opt?" active":"");
-      if(col)el.innerHTML=`<span class="dd-dot" style="background:${col.dot||col.bg}"></span>${esc(opt)}`;
+      if(field==="priority")el.innerHTML=`${renderPriorityBars(opt)}${esc(opt)}`;
+      else if(col)el.innerHTML=`<span class="dd-dot" style="background:${col.dot||col.bg}"></span>${esc(opt)}`;
       else el.textContent=opt;
       el.onclick=()=>{applyFieldFromDD(id,field,opt);closeDD();};
       pop.appendChild(el);
@@ -1854,13 +1955,15 @@ function handleHotkeys(e){
   if(e.key==="Enter"){e.preventDefault();editSelectedIssueTitle();return;}
   if(e.key==="ArrowDown"){
     e.preventDefault();
-    if(e.shiftKey)extendVisibleSelection(1);
+    if(e.metaKey||e.ctrlKey)selectVisibleEndpoint("last");
+    else if(e.shiftKey)extendVisibleSelection(1);
     else selectNextVisibleIssue();
     return;
   }
   if(e.key==="ArrowUp"){
     e.preventDefault();
-    if(e.shiftKey)extendVisibleSelection(-1);
+    if(e.metaKey||e.ctrlKey)selectVisibleEndpoint("first");
+    else if(e.shiftKey)extendVisibleSelection(-1);
     else selectPreviousVisibleIssue();
     return;
   }
