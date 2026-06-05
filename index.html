@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>I Got Issues</title>
+<link rel="icon" href="igotissues-icon.png" type="image/png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -103,6 +104,7 @@ body.hotkey-strip-expanded{padding-bottom:calc(var(--footer-h) + var(--hotkey-st
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:12px;height:52px;position:sticky;top:0;z-index:60;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .topbar-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;color:var(--purple)}
 .topbar-logo i{font-size:20px}
+.topbar-logo-mark{width:26px;height:26px;border-radius:7px;display:block;flex-shrink:0}
 .sep{width:1px;height:22px;background:var(--border)}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius);border:1.5px solid transparent;background:var(--purple);color:#fff;font-size:13px;cursor:pointer;font-family:inherit;transition:background .12s}
 .btn:hover{background:var(--purple-dark)}
@@ -467,6 +469,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   margin-bottom:2px;
 }
 .empty-card-icon i{font-size:28px;opacity:1}
+.empty-card-logo{width:42px;height:42px;display:block;border-radius:10px}
 .empty-card-emoji{font-size:30px;line-height:1;filter:saturate(.95)}
 
 .empty-brand-logo{position:relative;width:42px;height:34px;color:var(--purple);display:block}
@@ -529,7 +532,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 
 <div class="topbar">
   <div class="topbar-logo">
-    <i class="ti ti-layout-kanban"></i>
+    <img class="topbar-logo-mark" src="igotissues-icon.png" alt="" aria-hidden="true">
     <span>I Got Issues</span>
   </div>
   <div class="sep"></div>
@@ -1251,7 +1254,7 @@ function render(){
   const board=document.getElementById("board");
   if(!issues.length){
     currentVisibleIds=[];
-    board.innerHTML=`<div class="empty-board"><div class="empty-card"><div class="empty-card-icon"><span class="empty-brand-logo" aria-hidden="true"><span class="empty-brand-mouth"></span></span></div><h2>I Got Issues...</h2><p class="empty-sub">But you got them too.</p><p class="empty-copy">Leave your Markdown files alone and create your issues here.</p><div class="empty-actions"><button class="btn" onclick="addIssueTop()">New issue</button><button class="btn ghost" onclick="triggerImport()">Import JSON</button></div></div></div>`;
+    board.innerHTML=`<div class="empty-board"><div class="empty-card"><div class="empty-card-icon"><img class="empty-card-logo" src="igotissues-icon.png" alt="" aria-hidden="true"></div><h2>I Got Issues...</h2><p class="empty-sub">But you got them too.</p><p class="empty-copy">Leave your Markdown files alone and create your issues here.</p><div class="empty-actions"><button class="btn" onclick="addIssueTop()">New issue</button><button class="btn ghost" onclick="triggerImport()">Import JSON</button></div></div></div>`;
     return;
   }
 
