@@ -1555,6 +1555,12 @@ function getBottomDockHeight(){
   const hotkeys=document.body.classList.contains("hotkey-strip-expanded")?(parseFloat(root.getPropertyValue("--hotkey-strip-h"))||0):0;
   return footer+hotkeys;
 }
+function getTopDockHeight(){
+  const topbar=document.querySelector(".topbar")?.getBoundingClientRect().height||52;
+  const toolbar=document.querySelector(".toolbar")?.getBoundingClientRect().height||44;
+  const activeGroupHeader=document.querySelector(".grp-head")?.getBoundingClientRect().height||38;
+  return topbar+toolbar+activeGroupHeader;
+}
 function scrollRowIntoView(id){
   const row=document.querySelector(`.irow[data-id="${CSS.escape(id)}"]`);
   if(!row)return null;
@@ -1562,8 +1568,9 @@ function scrollRowIntoView(id){
   setTimeout(()=>{
     const rect=row.getBoundingClientRect();
     const safeBottom=window.innerHeight-getBottomDockHeight()-14;
+    const safeTop=getTopDockHeight()+8;
     if(rect.bottom>safeBottom)window.scrollBy({top:rect.bottom-safeBottom,behavior:"smooth"});
-    if(rect.top<96)window.scrollBy({top:rect.top-96,behavior:"smooth"});
+    if(rect.top<safeTop)window.scrollBy({top:rect.top-safeTop,behavior:"smooth"});
   },40);
   return row;
 }
@@ -1709,9 +1716,14 @@ function beginTitleEdit(wrap,id){
   if(!wrap)return;
   const span=wrap.querySelector(".title-text");if(!span)return;
   const i=issues.find(x=>x.id===id);if(!i)return;
+  const row=wrap.closest(".irow");
+  if(row)row.draggable=false;
   const inp=document.createElement("input");
   inp.type="text";inp.className="title-input";inp.value=i.title;
   span.replaceWith(inp);inp.focus();inp.select();
+  ["pointerdown","mousedown","click","dblclick"].forEach(type=>{
+    inp.addEventListener(type,ev=>ev.stopPropagation());
+  });
   inp.addEventListener("input",()=>updateTopicSuggest(inp));
   inp.addEventListener("keyup",ev=>{
     if(["ArrowDown","ArrowUp","Enter","Escape"].includes(ev.key))return;
