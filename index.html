@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>I Got Issues</title>
-<link rel="icon" href="igotissues-icon.png" type="image/png">
+<link rel="icon" href="igotissues-icon.png?v=2" type="image/png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -532,7 +532,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 
 <div class="topbar">
   <div class="topbar-logo">
-    <img class="topbar-logo-mark" src="igotissues-icon.png" alt="" aria-hidden="true">
+    <img class="topbar-logo-mark" src="igotissues-icon.png?v=2" alt="" aria-hidden="true">
     <span>I Got Issues</span>
   </div>
   <div class="sep"></div>
@@ -1254,7 +1254,7 @@ function render(){
   const board=document.getElementById("board");
   if(!issues.length){
     currentVisibleIds=[];
-    board.innerHTML=`<div class="empty-board"><div class="empty-card"><div class="empty-card-icon"><img class="empty-card-logo" src="igotissues-icon.png" alt="" aria-hidden="true"></div><h2>I Got Issues...</h2><p class="empty-sub">But you got them too.</p><p class="empty-copy">Leave your Markdown files alone and create your issues here.</p><div class="empty-actions"><button class="btn" onclick="addIssueTop()">New issue</button><button class="btn ghost" onclick="triggerImport()">Import JSON</button></div></div></div>`;
+    board.innerHTML=`<div class="empty-board"><div class="empty-card"><div class="empty-card-icon"><img class="empty-card-logo" src="igotissues-icon.png?v=2" alt="" aria-hidden="true"></div><h2>I Got Issues...</h2><p class="empty-sub">But you got them too.</p><p class="empty-copy">Leave your Markdown files alone and create your issues here.</p><div class="empty-actions"><button class="btn" onclick="addIssueTop()">New issue</button><button class="btn ghost" onclick="triggerImport()">Import JSON</button></div></div></div>`;
     return;
   }
 
