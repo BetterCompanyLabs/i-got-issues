@@ -71,6 +71,20 @@
 :root[data-theme="light"] .tbl{background:#fff!important}
 :root[data-theme="light"] .irow td{border-color:#e5e5e5!important}
 :root[data-theme="light"] .project-popup{background:#fff!important;border-color:#e5e5e5!important}
+:root[data-theme="light"] .due-pill{background:#f3f4f6!important;color:#6b7280!important}
+:root[data-theme="light"] .due-pill.set{background:#eef2ff!important;color:#3730a3!important}
+:root[data-theme="light"] .due-pill.overdue{background:#fee2e2!important;color:#991b1b!important}
+:root[data-theme="light"] .due-pill.today{background:#fef3c7!important;color:#92400e!important}
+:root[data-theme="light"] .due-pill.future{background:#dbeafe!important;color:#1e40af!important}
+:root[data-theme="light"] .due-pill.empty{background:#f5f5f5!important;color:#aaa!important}
+:root[data-theme="light"] .due-native{color-scheme:light}
+:root[data-theme="dark"] .due-pill{background:#2a2a45!important;color:#9999bb!important}
+:root[data-theme="dark"] .due-pill.set{background:#34345f!important;color:#d8d8ff!important}
+:root[data-theme="dark"] .due-pill.overdue{background:#3a2430!important;color:#ffb4b4!important}
+:root[data-theme="dark"] .due-pill.today{background:#3a3120!important;color:#ffd98a!important}
+:root[data-theme="dark"] .due-pill.future{background:#263354!important;color:#b8ccff!important}
+:root[data-theme="dark"] .due-pill.empty{background:#2a2a45!important;color:#666!important}
+:root[data-theme="dark"] .due-native{color-scheme:dark}
 .theme-toggle{width:34px;height:30px;justify-content:center;padding:6px 9px}
 .theme-toggle i{font-size:16px}
 .settings-toggle{width:34px;height:30px;justify-content:center;padding:6px 9px}
@@ -188,14 +202,21 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .td-badge:hover .badge-inner{filter:brightness(.95)}
 .badge-inner{display:flex;align-items:center;justify-content:center;height:40px;padding:0 6px}
 .badge{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap;min-width:64px;text-align:center;cursor:pointer}
+.td-badge .badge .badge-x{margin-left:-3px}
 .badge-empty{display:inline-block;padding:4px 10px;border-radius:4px;font-size:12px;color:#bbb;background:#f5f5f5;min-width:64px;text-align:center}
 .td-who{width:75px;min-width:75px;text-align:center;cursor:pointer}
 .td-due{width:101px;min-width:101px;text-align:center;position:relative;cursor:pointer}
 .due-wrap{height:40px;display:flex;align-items:center;justify-content:center;padding:0 6px;position:relative}
-.due-pill{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:74px;max-width:92px;padding:4px 9px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap;text-align:center;background:#f3f4f6;color:#6b7280;line-height:1.2}
+.due-pill{display:inline-flex;align-items:center;justify-content:center;gap:3px;min-width:74px;max-width:92px;padding:4px 9px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap;text-align:center;background:#f3f4f6;color:#6b7280;line-height:1.2}
 .due-pill.set{background:#eef2ff;color:#3730a3}
 .due-pill.empty{min-width:34px;color:var(--text-3);background:#f5f5f5}
+.due-pill.overdue{background:#fee2e2;color:#991b1b}
+.due-pill.today{background:#fef3c7;color:#92400e}
+.due-pill.future{background:#dbeafe;color:#1e40af}
 .due-pill i{font-size:13px;line-height:1}
+.due-x{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;font-size:10px;line-height:1;opacity:.65;margin-right:-4px}
+.due-x i{font-size:10px;line-height:1}
+.due-x:hover{opacity:1;background:rgba(0,0,0,.12)}
 .due-native{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;background:transparent;color:transparent;pointer-events:none}
 .due-native::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 .who-avatar{width:28px;height:28px;border-radius:50%;background:#e0f0ff;border:1.5px solid #b5d4f4;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#1a5fa8}
@@ -1335,6 +1356,7 @@ function renderRow(i){
   const bEf=ec?`<span class="badge" style="background:${ec.bg};color:${ec.c}">${esc(i.effort)}</span>`:`<span class="badge-empty">—</span>`;
   const due=i.dueDate||"";
   const dueLabel=due?formatDueDate(due):"";
+  const dueTone=due?getDueTone(due):"";
   const who=i.who?`<span class="who-avatar" title="${esc(i.who)}">${esc(i.who.slice(0,2).toUpperCase())}</span>`:`<span class="who-empty"><i class="ti ti-user" style="font-size:13px"></i></span>`;
   const done=status==="Done"?"text-decoration:line-through;opacity:.45":"";
   return`<tr class="irow${selectedIds.has(i.id)?" selected":""}" data-id="${i.id}" draggable="true" onpointerup="handleRowPointerUp(event,'${i.id}')" ondblclick="handleRowDoubleClick(event,'${i.id}')" ondragstart="dragStart(event,'${i.id}')" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropIssue(event,'${i.id}')" ondragend="dragEnd(event)">
@@ -1352,7 +1374,7 @@ function renderRow(i){
     <td class="td-badge" onclick="openDD(event,'${i.id}','priority')"><div class="badge-inner">${bPr}</div></td>
     <td class="td-badge" onclick="openDD(event,'${i.id}','topic')"><div class="badge-inner">${bTp}</div></td>
     <td class="td-badge" onclick="openDD(event,'${i.id}','effort')"><div class="badge-inner">${bEf}</div></td>
-    <td class="td-due" onclick="openDuePicker(event,'${i.id}')"><div class="due-wrap">${due?`<span class="due-pill set">${esc(dueLabel)}</span>`:`<span class="due-pill empty" title="Set due date"><i class="ti ti-calendar"></i></span>`}<input class="due-native" id="due_${i.id}" type="date" value="${esc(due)}" onclick="event.stopPropagation()" onchange="setDueDateFromInput(event,'${i.id}',this.value)"></div></td>
+    <td class="td-due" onclick="openDuePicker(event,'${i.id}')"><div class="due-wrap">${due?`<span class="due-pill set ${dueTone}">${esc(dueLabel)}<span class="due-x" onclick="clearDueDate(event,'${i.id}')" title="Clear due date"><i class="ti ti-x"></i></span></span>`:`<span class="due-pill empty" title="Set due date"><i class="ti ti-calendar"></i></span>`}<input class="due-native" id="due_${i.id}" type="date" value="${esc(due)}" onclick="event.stopPropagation()" onchange="setDueDateFromInput(event,'${i.id}',this.value)"></div></td>
     <td class="td-who" onclick="openDD(event,'${i.id}','who')"><div class="badge-inner">${who}</div></td>
     <td class="td-act"><button class="del-btn" onclick="confirmDel('${i.id}')" title="Delete"><i class="ti ti-trash"></i></button></td>
   </tr>`;
@@ -1409,6 +1431,13 @@ function todayISO(){
   const pad=n=>String(n).padStart(2,"0");
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 }
+function getDueTone(iso){
+  if(!iso)return"";
+  const today=todayISO();
+  if(iso<today)return"overdue";
+  if(iso===today)return"today";
+  return"future";
+}
 function addDaysISO(baseISO,days){
   const base=baseISO?new Date(baseISO+"T00:00:00"):new Date();
   base.setDate(base.getDate()+days);
@@ -1420,6 +1449,12 @@ function setDueDateFromInput(e,id,value){
   const ids=getBulkTargetIds(id);
   setFieldForIds(ids,"dueDate",value||"");
   if(ids.length>1)toast(`${ids.length} due dates updated ✓`);
+}
+function clearDueDate(e,id){
+  e.stopPropagation();
+  const ids=getBulkTargetIds(id);
+  setFieldForIds(ids,"dueDate","");
+  if(ids.length>1)toast(`${ids.length} due dates cleared ✓`);
 }
 function openDuePicker(e,id){
   e.stopPropagation();
