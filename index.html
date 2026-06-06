@@ -128,9 +128,13 @@ body.hotkey-strip-expanded{padding-bottom:calc(var(--footer-h) + var(--hotkey-st
 .toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:10px;min-height:44px;position:sticky;top:52px;z-index:55;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .sw{position:relative;display:flex;align-items:center}
 .sw i{position:absolute;left:8px;font-size:14px;color:var(--text-2);pointer-events:none}
-.tb-input{padding:5px 10px 5px 28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;color:var(--text);width:220px;font-family:inherit;outline:none}
+.tb-input{padding:5px 24px 5px 28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;color:var(--text);width:80px;font-family:inherit;outline:none}
 .tb-input::placeholder{font-size:12px;color:var(--text-2)}
 .tb-input:focus{border-color:var(--purple)}
+.search-clear{position:absolute;right:5px;width:16px;height:16px;border:none;border-radius:50%;background:transparent;color:var(--text-3);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.search-clear.on{display:flex}
+.search-clear:hover{background:var(--border);color:var(--text)}
+.search-clear i{position:static;font-size:11px;pointer-events:none}
 .tb-sel{padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;outline:none}
 .tb-sel:focus{border-color:var(--purple)}
 .tb-label{font-size:11px;color:var(--text-2);font-weight:500;white-space:nowrap}
@@ -174,7 +178,7 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .td-cb{width:var(--cb-col-w);text-align:center;padding:0 6px}
 .td-cb input,.group-select{display:block;margin:0 auto}
 .td-cb input,.group-select{accent-color:var(--purple);cursor:pointer;width:13px;height:13px}
-.td-title{min-width:420px;width:auto;padding:0}
+.td-title{min-width:320px;width:auto;padding:0}
 .title-wrap{display:flex;align-items:center;gap:7px;padding:0 10px;height:40px}
 .mobile-meta{display:none}
 .title-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
@@ -204,10 +208,10 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .title-text{font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;padding:3px 5px;border-radius:4px;border:1.5px solid transparent}
 .title-text:hover{background:var(--bg);border-color:var(--border)}
 .title-input{font-size:13px;flex:1;border:1.5px solid var(--purple);border-radius:4px;padding:3px 6px;outline:none;font-family:inherit;background:var(--surface);color:var(--text);min-width:0;box-shadow:0 0 0 3px rgba(97,97,214,.12)}
-.desc-btn{opacity:0;display:flex;align-items:center;gap:2px;padding:3px 5px;border-radius:4px;cursor:pointer;color:var(--text-2);border:none;background:none;flex-shrink:0;font-size:13px;transition:all .1s}
+.desc-btn{opacity:0;display:flex;align-items:center;gap:2px;width:0;padding:3px 0;border-radius:4px;cursor:pointer;color:var(--text-2);border:none;background:none;flex-shrink:0;font-size:13px;overflow:hidden;transition:all .1s}
 .desc-btn:hover{background:var(--purple-light);color:var(--purple)}
-.irow:hover .desc-btn{opacity:1}
-.desc-btn.has-desc{opacity:1;color:var(--purple)}
+.irow:hover .desc-btn,.desc-btn.cell-focus{opacity:1;width:18px;padding:3px 2px}
+.desc-btn.has-desc{opacity:1;width:18px;padding:3px 2px;color:var(--purple)}
 .desc-btn.has-desc:hover{background:var(--purple-light);color:var(--purple)}
 .hdr-row th.sortable{cursor:pointer;user-select:none}
 .hdr-row th.sortable:hover{color:var(--purple)}
@@ -277,7 +281,8 @@ body.issue-dividers .irow td:last-child{border-right:none}
 input[type=text],textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);outline:none;transition:border-color .12s}
 input[type=text]:focus,textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(97,97,214,.1)}
 textarea{min-height:120px;resize:vertical;line-height:1.6}
-.modal-foot{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.modal-foot{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.modal-foot-hint{margin-right:auto;font-size:11px;color:var(--text-3);font-weight:600}
 /* confirm dialog */
 .confirm-box{background:var(--surface);border-radius:10px;border:1px solid var(--border);padding:24px;width:320px;box-shadow:var(--shadow);text-align:center}
 .confirm-box p{margin-bottom:16px;font-size:14px;line-height:1.5;color:var(--text-2)}
@@ -305,6 +310,8 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .hotkey-chip span{color:var(--text-2);font-weight:600}
 @media(max-width:640px){.hotkey-sections{grid-template-columns:1fr}.hotkey-grid{grid-template-columns:110px 1fr}}
 .irow.selected{background:#f0f0ff}
+.irow td.cell-focus,.irow .title-wrap.cell-focus,.irow .desc-btn.cell-focus{box-shadow:inset 0 0 0 1px rgba(97,97,214,.38);background:rgba(97,97,214,.045)}
+.irow .desc-btn.cell-focus{opacity:1}
 .irow.dragging{opacity:.45;cursor:grabbing}
 .irow.drag-over{outline:2px solid var(--purple);outline-offset:-2px}
 
@@ -373,15 +380,15 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .toolbar>*{flex-shrink:0}
 .board{width:100%}
 .grp{max-width:100%}
-.tbl{table-layout:fixed;min-width:900px}
-.tbl col:nth-child(2){width:42% !important}
+.tbl{table-layout:fixed;min-width:962px}
+.tbl col:nth-child(2){width:320px !important}
 .tbl col:nth-child(3){width:93px !important}
 .tbl col:nth-child(4){width:97px !important}
 .tbl col:nth-child(5){width:115px !important}
 .tbl col:nth-child(6){width:87px !important}
 .tbl col:nth-child(7){width:101px !important}
 .tbl col:nth-child(8){width:75px !important}
-.hdr-row th.th-title,.td-title{min-width:280px}
+.hdr-row th.th-title,.td-title{min-width:320px}
 .title-wrap{min-width:0}
 .title-text{min-width:0}
 
@@ -405,9 +412,12 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   .status-stat-pill{padding:2px 9px}
   .status-stat-pill .stat-label{display:none}
   .toolbar{top:52px;padding:8px 10px;gap:8px}
-  .tb-input{width:190px}
+  .tb-input{width:90px}
   .tb-label,.toolbar .sep{display:none}
   .board{padding:12px 10px}
+}
+
+@media(max-width:900px) and (pointer:coarse){
   .tbl{min-width:650px}
   .tbl col:nth-child(2){width:300px !important}
   .tbl col:nth-child(5),
@@ -431,7 +441,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   .app-action-btn{min-width:86px;height:32px;font-size:12px;padding-left:10px;padding-right:10px}
   .paste-action-btn{height:32px;font-size:12px;padding-left:9px;padding-right:9px}
   .sw i{left:7px;font-size:13px}
-  .tb-input{width:112px;padding:5px 8px 5px 25px;font-size:16px}
+  .tb-input{width:86px;padding:5px 24px 5px 25px;font-size:16px}
   .tb-sel{max-width:104px;padding:5px 6px;font-size:12px}
   input[type=text],textarea,.dd-text-input,.title-input{font-size:16px}
   .settings-popup{width:min(292px,calc(100vw - 16px));max-height:calc(100vh - 80px);overflow-y:auto}
@@ -607,7 +617,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 <div class="toolbar">
   <button class="btn app-action-btn" onclick="addIssueTop()">New issue</button>
   <button class="btn ghost paste-action-btn" onclick="quickPasteOrOpenModal()" title="Paste issues"><i class="ti ti-clipboard-plus"></i> Paste</button>
-  <div class="sw"><i class="ti ti-search"></i><input class="tb-input" placeholder="Search..." id="qSearch" oninput="render()"></div>
+  <div class="sw"><i class="ti ti-search"></i><input class="tb-input" placeholder="..." aria-label="Search" id="qSearch" oninput="render()"><button class="search-clear" id="qSearchClear" type="button" onclick="clearSearch()" title="Clear search"><i class="ti ti-x"></i></button></div>
   <div class="sep"></div>
   <span class="tb-label">Group by:</span>
 <select class="tb-sel" id="qGroup" onchange="this.blur();render()">
@@ -707,6 +717,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
       </div>
     </div>
     <div class="modal-foot">
+      <span class="modal-foot-hint">⌘/Ctrl S to save</span>
       <button class="btn ghost" onclick="closeDesc()">Cancel</button>
       <button class="btn" onclick="saveDesc()"><i class="ti ti-check"></i> Save</button>
     </div>
@@ -831,6 +842,7 @@ let selectedIds=new Set();
 let currentVisibleIds=[];
 let lastSelectedId=null;
 let selectionAnchorId=null;
+let cellFocus={id:null,col:"title"};
 let titleEditSequenceActive=false;
 let sortDirection="manual";
 let collapsed={};
@@ -1221,6 +1233,18 @@ sort:document.getElementById("qSort")?.value||"manual",
 sortDir:sortDirection  
 };
 }
+function syncSearchClear(){
+  const input=document.getElementById("qSearch");
+  const btn=document.getElementById("qSearchClear");
+  if(btn)btn.classList.toggle("on",!!input?.value);
+}
+function clearSearch(){
+  const input=document.getElementById("qSearch");
+  if(!input)return;
+  input.value="";
+  input.focus({preventScroll:true});
+  render();
+}
 
 function sortIssues(list, sortKey){
   if(!sortKey||sortKey==="manual")return list;
@@ -1290,6 +1314,7 @@ function cycleHeaderSort(sortKey){
 function render(){
   selectedIds=new Set([...selectedIds].filter(id=>issues.some(i=>i.id===id)));
   const f=getFilter();
+  syncSearchClear();
   let filtered=issues.filter(i=>{
     if(f.q&&!i.title.toLowerCase().includes(f.q)&&!(i.desc||"").toLowerCase().includes(f.q))return false;
     if(f.st&&i.status!==f.st)return false;
@@ -1424,13 +1449,15 @@ function renderRow(i){
   const dueTone=due?getDueTone(due):"";
   const who=i.who?`<span class="who-avatar" title="${esc(i.who)}">${esc(i.who.slice(0,2).toUpperCase())}</span>`:`<span class="who-empty"><i class="ti ti-user" style="font-size:13px"></i></span>`;
   const done=status==="Done"?"text-decoration:line-through;opacity:.45":"";
+  const focusCol=cellFocus.id===i.id?cellFocus.col:"";
+  const focusClass=col=>focusCol===col?" cell-focus":"";
   return`<tr class="irow${selectedIds.has(i.id)?" selected":""}" data-id="${i.id}" draggable="true" onpointerup="handleRowPointerUp(event,'${i.id}')" ondblclick="handleRowDoubleClick(event,'${i.id}')" ondragstart="dragStart(event,'${i.id}')" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropIssue(event,'${i.id}')" ondragend="dragEnd(event)">
     <td class="td-cb"><input type="checkbox" ${selectedIds.has(i.id)?"checked":""} onclick="handleCheckboxClick(event,'${i.id}')"></td>
     <td class="td-title">
-      <div class="title-wrap">
+      <div class="title-wrap${focusClass("title")}" data-cell="title">
         ${renderPriorityBars(i.priority)}
         <span class="title-text" style="${done}" onclick="startTitleEdit(event,'${i.id}')" title="${esc(i.title)}">${esc(i.title)||"<em style='opacity:.4'>Title...</em>"}</span>
-<button class="desc-btn${i.desc?" has-desc":""}" onclick="openDesc('${i.id}')" title="Description / Details">
+<button class="desc-btn${i.desc?" has-desc":""}${focusClass("desc")}" data-cell="desc" onclick="openDesc('${i.id}')" title="Description / Details">
   <i class="ti ${i.desc ? 'ti-message-circle-filled' : 'ti-message-circle'}" style="font-size:14px"></i>
 </button>
       </div>
@@ -1443,12 +1470,12 @@ function renderRow(i){
         <button type="button" onclick="openDD(event,'${i.id}','who')">${who}</button>
       </div>
     </td>
-    <td class="td-badge" onclick="openDD(event,'${i.id}','status')"><div class="badge-inner">${bSt}</div></td>
-    <td class="td-badge" onclick="openDD(event,'${i.id}','priority')"><div class="badge-inner">${bPr}</div></td>
-    <td class="td-badge" onclick="openDD(event,'${i.id}','topic')"><div class="badge-inner">${bTp}</div></td>
-    <td class="td-badge" onclick="openDD(event,'${i.id}','effort')"><div class="badge-inner">${bEf}</div></td>
-    <td class="td-due" onclick="openDuePicker(event,'${i.id}')"><div class="due-wrap">${due?`<span class="due-pill set ${dueTone}">${esc(dueLabel)}<span class="due-x" onclick="clearDueDate(event,'${i.id}')" title="Clear due date"><i class="ti ti-x"></i></span></span>`:`<span class="due-pill empty" title="Set due date"><i class="ti ti-calendar"></i></span>`}<input class="due-native" id="due_${i.id}" type="date" value="${esc(due)}" onclick="event.stopPropagation()" onchange="setDueDateFromInput(event,'${i.id}',this.value)"></div></td>
-    <td class="td-who" onclick="openDD(event,'${i.id}','who')"><div class="badge-inner">${who}</div></td>
+    <td class="td-badge${focusClass("status")}" data-cell="status" onclick="openDD(event,'${i.id}','status')"><div class="badge-inner">${bSt}</div></td>
+    <td class="td-badge${focusClass("priority")}" data-cell="priority" onclick="openDD(event,'${i.id}','priority')"><div class="badge-inner">${bPr}</div></td>
+    <td class="td-badge${focusClass("topic")}" data-cell="topic" onclick="openDD(event,'${i.id}','topic')"><div class="badge-inner">${bTp}</div></td>
+    <td class="td-badge${focusClass("effort")}" data-cell="effort" onclick="openDD(event,'${i.id}','effort')"><div class="badge-inner">${bEf}</div></td>
+    <td class="td-due${focusClass("due")}" data-cell="due" onclick="openDuePicker(event,'${i.id}')"><div class="due-wrap">${due?`<span class="due-pill set ${dueTone}">${esc(dueLabel)}<span class="due-x" onclick="clearDueDate(event,'${i.id}')" title="Clear due date"><i class="ti ti-x"></i></span></span>`:`<span class="due-pill empty" title="Set due date"><i class="ti ti-calendar"></i></span>`}<input class="due-native" id="due_${i.id}" type="date" value="${esc(due)}" onclick="event.stopPropagation()" onchange="setDueDateFromInput(event,'${i.id}',this.value)"></div></td>
+    <td class="td-who${focusClass("who")}" data-cell="who" onclick="openDD(event,'${i.id}','who')"><div class="badge-inner">${who}</div></td>
     <td class="td-act"><button class="del-btn" onclick="confirmDel('${i.id}')" title="Delete"><i class="ti ti-trash"></i></button></td>
   </tr>`;
 }
@@ -1502,6 +1529,28 @@ function applyFieldFromDD(id,field,val){
   const ids=getBulkTargetIds(id);
   setFieldForIds(ids,field,val);
   if(ids.length>1)toast(`${ids.length} issues updated ✓`);
+}
+function cycleCellOption(id,field,label){
+  const opts=S[field]?.opts;
+  if(!opts?.length)return false;
+  const issue=issues.find(i=>i.id===id);
+  if(!issue)return false;
+  const ids=getBulkTargetIds(id);
+  const current=field==="status"?(issue[field]||"Open"):(issue[field]||"");
+  const idx=opts.indexOf(current);
+  const next=opts[(idx+1)%opts.length];
+  setFieldForIds(ids,field,next);
+  toast(`${ids.length} issue${ids.length===1?"":"s"} ${label} → ${next}`);
+  return true;
+}
+function stepDueDateCell(id){
+  const issue=issues.find(i=>i.id===id);
+  if(!issue)return false;
+  const ids=getBulkTargetIds(id);
+  const next=issue.dueDate?addDaysISO(issue.dueDate,1):todayISO();
+  setFieldForIds(ids,"dueDate",next);
+  toast(`${ids.length} due date${ids.length===1?"":"s"} → ${formatDueDate(next)}`);
+  return true;
 }
 function clearTopic(e,id){
   e.stopPropagation();
@@ -1601,6 +1650,8 @@ function handleCheckboxClick(e,id){
     selectionAnchorId=id;
   }
   lastSelectedId=id;
+  if(shouldSelect&&isDesktopCellFocusAvailable())cellFocus={id,col:cellFocus.col||"title"};
+  if(!selectedIds.size)cellFocus={id:null,col:"title"};
   render();
 }
 function duplicateSelectedIssues(){
@@ -1637,6 +1688,83 @@ function cyclePriorityForSelected(){
 
 function getTopmostSelectedVisibleId(){
   return currentVisibleIds.find(id=>selectedIds.has(id))||getSelectedIds()[0]||null;
+}
+const CELL_FOCUS_COLS=["title","desc","status","priority","topic","effort","due","who"];
+function isDesktopCellFocusAvailable(){
+  return window.matchMedia?.("(pointer: fine)").matches;
+}
+function normalizeCellFocus(){
+  if(!isDesktopCellFocusAvailable()||!selectedIds.size){
+    cellFocus={id:null,col:"title"};
+    return false;
+  }
+  const id=(cellFocus.id&&selectedIds.has(cellFocus.id)&&currentVisibleIds.includes(cellFocus.id))
+    ?cellFocus.id
+    :getTopmostSelectedVisibleId();
+  if(!id)return false;
+  const col=CELL_FOCUS_COLS.includes(cellFocus.col)?cellFocus.col:"title";
+  cellFocus={id,col};
+  return true;
+}
+function moveCellFocus(delta){
+  if(!normalizeCellFocus()){toast("No issue selected");return;}
+  const idx=CELL_FOCUS_COLS.indexOf(cellFocus.col);
+  const nextIdx=(idx+delta+CELL_FOCUS_COLS.length)%CELL_FOCUS_COLS.length;
+  const wrappedToStart=delta>0&&nextIdx===0;
+  cellFocus={id:cellFocus.id,col:CELL_FOCUS_COLS[nextIdx]};
+  updateCellFocusClasses();
+  requestAnimationFrame(()=>scrollCellIntoView({vertical:false,alignStart:wrappedToStart}));
+}
+function syncCellFocusToSelection(){
+  if(!isDesktopCellFocusAvailable())return;
+  if(!normalizeCellFocus())return;
+  render();
+  setTimeout(()=>scrollCellIntoView(),30);
+}
+function getCellFocusTarget(){
+  if(!normalizeCellFocus())return null;
+  const row=document.querySelector(`.irow[data-id="${CSS.escape(cellFocus.id)}"]`);
+  if(!row)return null;
+  return row.querySelector(`[data-cell="${CSS.escape(cellFocus.col)}"]`);
+}
+function updateCellFocusClasses(){
+  document.querySelectorAll(".cell-focus").forEach(el=>el.classList.remove("cell-focus"));
+  const target=getCellFocusTarget();
+  if(target)target.classList.add("cell-focus");
+}
+function scrollCellIntoView(opts={}){
+  if(!normalizeCellFocus())return;
+  if(opts.vertical!==false)scrollRowIntoView(cellFocus.id);
+  requestAnimationFrame(()=>{
+    const target=getCellFocusTarget();
+    if(!target)return;
+    const scroller=target.closest(".grp");
+    if(!scroller)return;
+    if(opts.alignStart){
+      scroller.scrollTo({left:0,behavior:"smooth"});
+      return;
+    }
+    const cellRect=target.getBoundingClientRect();
+    const scrollRect=scroller.getBoundingClientRect();
+    const pad=8;
+    if(cellRect.left<scrollRect.left+pad){
+      scroller.scrollBy({left:cellRect.left-scrollRect.left-pad,behavior:"smooth"});
+    }else if(cellRect.right>scrollRect.right-pad){
+      scroller.scrollBy({left:cellRect.right-scrollRect.right+pad,behavior:"smooth"});
+    }
+  });
+}
+function activateCellFocus(){
+  if(!normalizeCellFocus()){toast("No issue selected");return;}
+  const {id,col}=cellFocus;
+  if(col==="title"){startTitleEditById(id);return;}
+  if(col==="desc"){openDesc(id);return;}
+  if(col==="due"&&stepDueDateCell(id))return;
+  const target=getCellFocusTarget();
+  if(!target)return;
+  const eventLike={stopPropagation(){},currentTarget:target};
+  if(col==="due")openDuePicker(eventLike,id);
+  else openDD(eventLike,id,col);
 }
 function getBottomDockHeight(){
   const root=getComputedStyle(document.documentElement);
@@ -1701,8 +1829,9 @@ function selectVisibleIssue(offset){
   selectedIds=new Set([nextId]);
   lastSelectedId=nextId;
   selectionAnchorId=nextId;
+  if(cellFocus.id)cellFocus.id=nextId;
   render();
-  setTimeout(()=>scrollRowIntoView(nextId),30);
+  setTimeout(()=>cellFocus.id?scrollCellIntoView():scrollRowIntoView(nextId),30);
 }
 function selectNextVisibleIssue(){selectVisibleIssue(1);}
 function selectPreviousVisibleIssue(){selectVisibleIssue(-1);}
@@ -1712,8 +1841,9 @@ function selectVisibleEndpoint(which){
   selectedIds=new Set([nextId]);
   lastSelectedId=nextId;
   selectionAnchorId=nextId;
+  if(cellFocus.id)cellFocus.id=nextId;
   render();
-  setTimeout(()=>scrollRowIntoView(nextId),30);
+  setTimeout(()=>cellFocus.id?scrollCellIntoView():scrollRowIntoView(nextId),30);
 }
 function extendVisibleSelection(offset){
   if(!currentVisibleIds.length){toast("No visible issues");return;}
@@ -1730,8 +1860,9 @@ function extendVisibleSelection(offset){
   selectedIds=new Set(currentVisibleIds.slice(from,to+1));
   lastSelectedId=currentVisibleIds[nextIndex];
   selectionAnchorId=anchor;
+  if(cellFocus.id)cellFocus.id=lastSelectedId;
   render();
-  setTimeout(()=>scrollRowIntoView(lastSelectedId),30);
+  setTimeout(()=>cellFocus.id?scrollCellIntoView():scrollRowIntoView(lastSelectedId),30);
 }
 
 function selectAllVisible(){
@@ -1757,6 +1888,7 @@ function deselectAllIssues(){
   selectedIds.clear();
   lastSelectedId=null;
   selectionAnchorId=null;
+  cellFocus={id:null,col:"title"};
   render();
   toast("Selection cleared");
 }
@@ -1989,6 +2121,7 @@ function openDD(e,id,field){
   if(top+300>window.innerHeight)top=rect.top-Math.min(300,pop.scrollHeight+8);
   pop.style.left=left+"px";pop.style.top=top+"px";
   ddActive=true;
+  if(!focusAfterOpen&&!getDDKeyboardItems().some(el=>el.classList.contains("active")))setDDKeyboardActive(0);
   if(focusAfterOpen){
     focusAfterOpen.focus({preventScroll:true});
     focusAfterOpen.select();
@@ -2002,6 +2135,53 @@ function openDD(e,id,field){
 }
 
 function closeDD(){document.getElementById("ddPop").style.display="none";ddActive=false;ddId=null;ddField=null;}
+function getDDKeyboardItems(){
+  const pop=document.getElementById("ddPop");
+  if(!pop||pop.style.display==="none")return [];
+  return [...pop.querySelectorAll(".dd-item")].filter(el=>el.offsetParent!==null);
+}
+function setDDKeyboardActive(index){
+  const items=getDDKeyboardItems();
+  if(!items.length)return;
+  const next=(index+items.length)%items.length;
+  items.forEach(el=>el.classList.remove("active"));
+  items[next].classList.add("active");
+  items[next].scrollIntoView({block:"nearest"});
+}
+function moveDDKeyboardActive(delta){
+  const items=getDDKeyboardItems();
+  if(!items.length)return;
+  const current=items.findIndex(el=>el.classList.contains("active"));
+  const base=current>=0?current:(delta>0?-1:0);
+  setDDKeyboardActive(base+delta);
+}
+function handleDDKeyboard(e){
+  if(!ddActive||isTypingTarget(e.target))return false;
+  if(isDesktopCellFocusAvailable()&&cellFocus.id&&(e.key==="ArrowRight"||e.key==="ArrowLeft"||e.key==="Tab")){
+    e.preventDefault();
+    closeDD();
+    moveCellFocus(e.key==="ArrowLeft"||e.shiftKey?-1:1);
+    return true;
+  }
+  if(e.key==="ArrowDown"){
+    e.preventDefault();
+    moveDDKeyboardActive(1);
+    return true;
+  }
+  if(e.key==="ArrowUp"){
+    e.preventDefault();
+    moveDDKeyboardActive(-1);
+    return true;
+  }
+  if(e.key==="Enter"){
+    e.preventDefault();
+    const items=getDDKeyboardItems();
+    const active=items.find(el=>el.classList.contains("active"))||items[0];
+    if(active)active.click();
+    return true;
+  }
+  return false;
+}
 function dismissDDOnPageMove(e){
   if(!ddActive)return;
   if(e.target?.closest?.("#ddPop"))return;
@@ -2060,6 +2240,7 @@ const confirmOpen =
     closeSettingsMenu();
     return;
   }
+  if(handleDDKeyboard(e))return;
 
   if(e.shiftKey&&!isTypingTarget(e.target)&&!anyModalOpen()){
     if(e.key==="ArrowDown"){
@@ -2325,7 +2506,22 @@ function pasteIssuesFromItems(items){
 function handleHotkeys(e){
   if(isTypingTarget(e.target)||anyModalOpen())return;
   const k=e.key.toLowerCase();
-  if(e.key==="Enter"){e.preventDefault();editSelectedIssueTitle();return;}
+  if(isDesktopCellFocusAvailable()&&selectedIds.size&&(e.key==="ArrowRight"||e.key==="ArrowLeft")){
+    e.preventDefault();
+    moveCellFocus(e.key==="ArrowRight"?1:-1);
+    return;
+  }
+  if(isDesktopCellFocusAvailable()&&selectedIds.size&&e.key==="Tab"){
+    e.preventDefault();
+    moveCellFocus(e.shiftKey?-1:1);
+    return;
+  }
+  if(e.key==="Enter"){
+    e.preventDefault();
+    if(isDesktopCellFocusAvailable()&&cellFocus.id)activateCellFocus();
+    else editSelectedIssueTitle();
+    return;
+  }
   if(e.key==="ArrowDown"){
     e.preventDefault();
     if(e.metaKey||e.ctrlKey)selectVisibleEndpoint("last");
@@ -2408,9 +2604,27 @@ function openDesc(id){
   const i=issues.find(x=>x.id===id);if(!i)return;
   document.getElementById("descHdrTitle").textContent=i.title;
   document.getElementById("descTitleInput").value=i.title;
-  document.getElementById("descTextarea").value=i.desc||"";
+  const desc=document.getElementById("descTextarea");
+  desc.value=i.desc||"";
+  desc.onkeydown=ev=>{
+    if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==="s"){
+      ev.preventDefault();
+      saveDesc();
+      return;
+    }
+    if(ev.key==="Enter"&&!ev.shiftKey&&!ev.metaKey&&!ev.ctrlKey&&!ev.altKey&&!desc.value.trim()){
+      ev.preventDefault();
+      closeDesc();
+    }
+  };
+  document.getElementById("descTitleInput").onkeydown=ev=>{
+    if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==="s"){
+      ev.preventDefault();
+      saveDesc();
+    }
+  };
   document.getElementById("descOverlay").style.display="flex";
-  setTimeout(()=>document.getElementById("descTextarea").focus(),60);
+  setTimeout(()=>desc.focus(),60);
 }
 function closeDesc(){document.getElementById("descOverlay").style.display="none";descEditId=null;}
 function saveDesc(){
