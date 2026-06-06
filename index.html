@@ -9,7 +9,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --purple:#6161d6;--purple-light:#ede8fe;--purple-dark:#5252c0;
+  --purple:#6161d6;--purple-light:#ede8fe;--purple-dark:#5252c0;--critical-red:#DE5B55;--blocked-red:#D96A64;
   --bg:#f5f5f7;--surface:#fff;--border:#e5e5e5;--border-hover:#ccc;
   --text:#1a1a2e;--text-2:#666;--text-3:#aaa;
   --radius:6px;--shadow:0 2px 12px rgba(0,0,0,.1);
@@ -191,7 +191,7 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .priority-bars.level-low{color:#9ca3af}
 .priority-bars.level-medium{color:#3b82f6}
 .priority-bars.level-high{color:#f59e0b}
-.priority-bars.level-critical{color:#ef4444}
+.priority-bars.level-critical{color:var(--critical-red)}
 .status-icon{display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;border-radius:50%;flex-shrink:0;position:relative;color:var(--status-dot,#3b82f6);border:1.8px solid currentColor;background:currentColor}
 .status-icon.open{background:#fff}
 .status-icon.in-progress{background:conic-gradient(#fff 0 50%, currentColor 0 100%)}
@@ -199,9 +199,6 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .status-icon.done{background:currentColor}
 .status-icon.done::after{content:"✓";color:#fff;font-size:8px;font-weight:900;line-height:1;transform:translateY(-.2px)}
 .status-icon.blocked{background:currentColor}
-.status-icon.blocked::before,.status-icon.blocked::after{content:"";position:absolute;width:7px;height:1.7px;border-radius:2px;background:#fff}
-.status-icon.blocked::before{transform:rotate(45deg)}
-.status-icon.blocked::after{transform:rotate(-45deg)}
 .status-icon.discarded{background:currentColor}
 .status-icon.discarded::after{content:"";position:absolute;width:8px;height:1.7px;border-radius:2px;background:#fff}
 .title-text{font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;padding:3px 5px;border-radius:4px;border:1.5px solid transparent}
@@ -481,7 +478,6 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   .mobile-meta .badge{gap:4px}
   .mobile-meta .status-icon{width:10px;height:10px;border-width:1.5px}
   .mobile-meta .status-icon.done::after{font-size:7px}
-  .mobile-meta .status-icon.blocked::before,.mobile-meta .status-icon.blocked::after{width:6px;height:1.5px}
   .mobile-meta .status-icon.discarded::after{width:6px;height:1.5px}
   .mobile-meta .priority-bars{width:12px;height:11px;gap:1px}
   .mobile-meta .priority-bars span{width:2.5px}
@@ -803,14 +799,14 @@ opts:["Open","In Progress","Review","Done","Blocked","Discarded"],
       "In Progress": {bg:"#fef3c7",c:"#92400e",dot:"#f59e0b"},
       "Review":    {bg:"#F6EAF5",c:"#9B5A92",dot:"#C97BBF"},
       "Done":        {bg:"#d1fae5",c:"#065f46",dot:"#10b981"},
-      "Blocked":     {bg:"#fee2e2",c:"#991b1b",dot:"#ef4444"},
+      "Blocked":     {bg:"#fee2e2",c:"#991b1b",dot:"var(--blocked-red)"},
       "Discarded":   {bg:"#f3f4f6",c:"#4b5563",dot:"#9ca3af"},
     }
   },
   priority:{
     opts:["Low","Medium","High","Critical"],
     colors:{
-      "Critical":{bg:"#fee2e2",c:"#991b1b",dot:"#ef4444"},
+      "Critical":{bg:"#fee2e2",c:"#991b1b",dot:"var(--critical-red)"},
       "High":    {bg:"#fef3c7",c:"#92400e",dot:"#f59e0b"},
       "Medium":  {bg:"#dbeafe",c:"#1e40af",dot:"#3b82f6"},
       "Low":     {bg:"#f3f4f6",c:"#6b7280",dot:"#9ca3af"},
