@@ -175,6 +175,7 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .td-cb input,.group-select{accent-color:var(--purple);cursor:pointer;width:13px;height:13px}
 .td-title{min-width:420px;width:auto;padding:0}
 .title-wrap{display:flex;align-items:center;gap:7px;padding:0 10px;height:40px}
+.mobile-meta{display:none}
 .title-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .priority-bars{display:inline-flex;align-items:flex-end;align-self:center;gap:1.5px;width:15px;height:14px;flex-shrink:0;color:#9ca3af}
 .priority-bars span{display:block;width:3px;border-radius:2px;background:var(--border);opacity:.95}
@@ -190,6 +191,18 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .priority-bars.level-medium{color:#3b82f6}
 .priority-bars.level-high{color:#f59e0b}
 .priority-bars.level-critical{color:#ef4444}
+.status-icon{display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;border-radius:50%;flex-shrink:0;position:relative;color:var(--status-dot,#3b82f6);border:1.8px solid currentColor;background:currentColor}
+.status-icon.open{background:#fff}
+.status-icon.in-progress{background:conic-gradient(#fff 0 50%, currentColor 0 100%)}
+.status-icon.review{background:conic-gradient(#fff 0 25%, currentColor 0 100%)}
+.status-icon.done{background:currentColor}
+.status-icon.done::after{content:"✓";color:#fff;font-size:8px;font-weight:900;line-height:1;transform:translateY(-.2px)}
+.status-icon.blocked{background:currentColor}
+.status-icon.blocked::before,.status-icon.blocked::after{content:"";position:absolute;width:7px;height:1.7px;border-radius:2px;background:#fff}
+.status-icon.blocked::before{transform:rotate(45deg)}
+.status-icon.blocked::after{transform:rotate(-45deg)}
+.status-icon.discarded{background:currentColor}
+.status-icon.discarded::after{content:"";position:absolute;width:8px;height:1.7px;border-radius:2px;background:#fff}
 .title-text{font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;padding:3px 5px;border-radius:4px;border:1.5px solid transparent}
 .title-text:hover{background:var(--bg);border-color:var(--border)}
 .title-input{font-size:13px;flex:1;border:1.5px solid var(--purple);border-radius:4px;padding:3px 6px;outline:none;font-family:inherit;background:var(--surface);color:var(--text);min-width:0;box-shadow:0 0 0 3px rgba(97,97,214,.12)}
@@ -438,6 +451,43 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   .due-pill.set::before{content:'📅';font-size:12px}
 }
 
+@media(max-width:640px) and (pointer:coarse){
+  .grp{overflow:visible}
+  .tbl{display:block;width:100%;min-width:0;table-layout:auto}
+  .tbl tbody{display:block;width:100%}
+  .tbl col:nth-child(n+3){display:none}
+  .hdr-row{display:none}
+  .irow{display:grid;width:100%;grid-template-columns:var(--cb-col-w) minmax(0,1fr);align-items:start;padding:8px 0}
+  .irow td{display:block;height:auto;border:0!important}
+  .irow .td-cb{grid-column:1;padding-top:8px}
+  .irow .td-title{grid-column:2;min-width:0;width:100%}
+  .irow .td-badge,.irow .td-due,.irow .td-who,.irow .td-act{display:none!important}
+  .add-row-tr,.add-row-tr td{display:block;width:100%}
+  .title-wrap{height:auto;min-height:28px;padding:0 8px 0 2px;align-items:center}
+  .title-wrap>.priority-bars{display:none}
+  .title-text{white-space:normal;line-height:1.35}
+  .desc-btn{opacity:1}
+  .mobile-meta{display:flex;flex-wrap:wrap;gap:5px;padding:3px 8px 0 2px}
+  .mobile-meta button,.mobile-meta-control{border:none;background:transparent;padding:0;margin:0;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center}
+  .mobile-due-control{position:relative}
+  .mobile-meta .badge,.mobile-meta .badge-empty{min-width:0;padding:3px 7px;font-size:10px}
+  .mobile-meta .badge{gap:4px}
+  .mobile-meta .status-icon{width:10px;height:10px;border-width:1.5px}
+  .mobile-meta .status-icon.done::after{font-size:7px}
+  .mobile-meta .status-icon.blocked::before,.mobile-meta .status-icon.blocked::after{width:6px;height:1.5px}
+  .mobile-meta .status-icon.discarded::after{width:6px;height:1.5px}
+  .mobile-meta .priority-bars{width:12px;height:11px;gap:1px}
+  .mobile-meta .priority-bars span{width:2.5px}
+  .mobile-meta .priority-bars span:nth-child(1){height:3px}
+  .mobile-meta .priority-bars span:nth-child(2){height:5px}
+  .mobile-meta .priority-bars span:nth-child(3){height:8px}
+  .mobile-meta .priority-bars span:nth-child(4){height:10px}
+  .mobile-meta .due-pill{min-width:0;max-width:none;padding:3px 7px;font-size:10px}
+  .mobile-meta .due-pill.set{font-size:10px}
+  .mobile-meta .due-pill.set::before{content:none}
+  .mobile-meta .who-avatar,.mobile-meta .who-empty{width:22px;height:22px;font-size:9px}
+}
+
 
 /* --- Polished empty state + footer --- */
 .board{min-height:calc(100vh - 52px - 44px - 86px);padding-left:18px;padding-right:18px}
@@ -562,7 +612,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   <option value="status">Status</option>
   <option value="priority">Priority</option>
   <option value="topic">Topic</option>
-  <option value="effort">Effort</option>
+  <option value="effort">Size</option>
 </select>
   <span class="tb-label">Sort by:</span>
 <select class="tb-sel" id="qSort" onchange="this.blur();handleSortChange()">
@@ -571,7 +621,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   <option value="status">Status</option>
   <option value="priority">Priority</option>
   <option value="topic">Topic</option>
-  <option value="effort">Effort</option>
+  <option value="effort">Size</option>
   <option value="dueDate">Due Date</option>
   <option value="who">Who</option>
 </select>
@@ -579,7 +629,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   <span class="tb-label">Filter:</span>
   <select class="tb-sel" id="qSt" onchange="this.blur();render()">
     <option value="">All Statuses</option>
-    <option>Open</option><option>In Progress</option><option>Review</option><option>Done</option><option>Blocked</option>
+    <option>Open</option><option>In Progress</option><option>Review</option><option>Done</option><option>Blocked</option><option>Discarded</option>
   </select>
   <select class="tb-sel" id="qPr" onchange="this.blur();render()">
     <option value="">All Priorities</option>
@@ -616,7 +666,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   <div class="hotkey-strip-list">
     <span class="hotkey-chip"><kbd>N / +</kbd><span>New</span></span>
     <span class="hotkey-chip"><kbd>Enter</kbd><span>Edit</span></span>
-    <span class="hotkey-chip"><kbd>1-5</kbd><span>Toggle Status</span></span>
+    <span class="hotkey-chip"><kbd>1-6</kbd><span>Toggle Status</span></span>
     <span class="hotkey-chip"><kbd>P</kbd><span>Toggle Priority</span></span>
     <span class="hotkey-chip"><kbd>T / W / #</kbd><span>Date = Today / +1 Week / +1 Day</span></span>
     <span class="hotkey-chip"><kbd>Space</kbd><span>Deselect</span></span>
@@ -712,6 +762,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
             <span class="hotkey-key">3 / R</span><span>Set selected issue(s) to Review</span>
             <span class="hotkey-key">4 / D</span><span>Set selected issue(s) to Done</span>
             <span class="hotkey-key">5 / B</span><span>Set selected issue(s) to Blocked</span>
+            <span class="hotkey-key">6 / X</span><span>Set selected issue(s) to Discarded</span>
           </div>
         </div>
         <div class="hotkey-section">
@@ -739,13 +790,14 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 <script>
 const S={
   status:{
-opts:["Open","In Progress","Review","Done","Blocked"],
+opts:["Open","In Progress","Review","Done","Blocked","Discarded"],
     colors:{
       "Open":        {bg:"#dbeafe",c:"#1e40af",dot:"#3b82f6"},
       "In Progress": {bg:"#fef3c7",c:"#92400e",dot:"#f59e0b"},
       "Review":    {bg:"#F6EAF5",c:"#9B5A92",dot:"#C97BBF"},
       "Done":        {bg:"#d1fae5",c:"#065f46",dot:"#10b981"},
       "Blocked":     {bg:"#fee2e2",c:"#991b1b",dot:"#ef4444"},
+      "Discarded":   {bg:"#f3f4f6",c:"#4b5563",dot:"#9ca3af"},
     }
   },
   priority:{
@@ -760,7 +812,7 @@ opts:["Open","In Progress","Review","Done","Blocked"],
   effort:{
     opts:["XS","S","M","L","XL"],
     colors:{
-      "XS":{bg:"#d1fae5",c:"#065f46",dot:"#10b981"},
+      "XS":{bg:"#f3f4f6",c:"#6b7280",dot:"#9ca3af"},
       "S": {bg:"#e0fdf4",c:"#0f766e",dot:"#14b8a6"},
       "M": {bg:"#dbeafe",c:"#1e40af",dot:"#3b82f6"},
       "L": {bg:"#fef3c7",c:"#92400e",dot:"#f59e0b"},
@@ -1112,7 +1164,7 @@ function deleteProject(e,id){
 function updateStatsPills(){
   const holder=document.getElementById("statsPills");
   if(!holder)return;
-  const statusOrder=["Open","In Progress","Review","Done","Blocked"];
+  const statusOrder=["Open","In Progress","Review","Done","Blocked","Discarded"];
   const counts=Object.fromEntries(statusOrder.map(st=>[st,0]));
   issues.forEach(i=>{
     const status=i.status||"Open";
@@ -1168,7 +1220,7 @@ sortDir:sortDirection
 function sortIssues(list, sortKey){
   if(!sortKey||sortKey==="manual")return list;
 
-const statusOrder={"Open":1,"In Progress":2,"Review":3,"Blocked":4,"Done":5};
+const statusOrder={"Open":1,"In Progress":2,"Review":3,"Blocked":4,"Discarded":5,"Done":6};
   const priorityOrder={"Critical":1,"High":2,"Medium":3,"Low":4};
   const effortOrder={"XS":1,"S":2,"M":3,"L":4,"XL":5};
   const originalIndex=new Map(issues.map((issue,idx)=>[issue.id,idx]));
@@ -1272,7 +1324,7 @@ function render(){
   const allKeys=new Set(filtered.map(keyOf));
 
   let keys=[...allKeys];
-  const order=f.grp==="status"?["Open","In Progress","Review","Blocked","Done"]:
+  const order=f.grp==="status"?["Open","In Progress","Review","Blocked","Discarded","Done"]:
                f.grp==="priority"?["Critical","High","Medium","Low"]:
                f.grp==="effort"?["XS","S","M","L","XL"]:null;
   if(order)keys.sort((a,b)=>{const ia=order.indexOf(a),ib=order.indexOf(b);return(ia<0?99:ia)-(ib<0?99:ib);});
@@ -1306,7 +1358,7 @@ function renderGroup(name,items,dotColor,key){
 <th class="sortable" onclick="cycleHeaderSort('status')">Status</th>
 <th class="sortable" onclick="cycleHeaderSort('priority')">Priority</th>
 <th class="sortable" onclick="cycleHeaderSort('topic')">Topic</th>
-<th class="sortable" onclick="cycleHeaderSort('effort')">Effort</th>
+<th class="sortable" onclick="cycleHeaderSort('effort')">Size</th>
 <th class="sortable" onclick="cycleHeaderSort('dueDate')">Due Date</th>
 <th class="sortable" onclick="cycleHeaderSort('who')">Who</th>
 <th></th>
@@ -1355,9 +1407,13 @@ function renderRow(i){
   const pc=S.priority.colors[i.priority];
   const ec=i.effort?S.effort.colors[i.effort]:null;
   const bSt=`<span class="badge" style="background:${sc.bg};color:${sc.c}">${esc(status)}</span>`;
+  const mSt=`<span class="badge" style="background:${sc.bg};color:${sc.c}">${renderStatusIcon(status)}${esc(status)}</span>`;
   const bPr=pc?`<span class="badge" style="background:${pc.bg};color:${pc.c}">${esc(i.priority)}</span>`:`<span class="badge-empty">—</span>`;
   const bTp=i.topic?`<span class="badge" style="background:#ede8fe;color:#3c3489">${esc(i.topic)}<span class="badge-x" onclick="clearTopic(event,'${i.id}')"><i class="ti ti-x"></i></span></span>`:`<span class="badge-empty">—</span>`;
-  const bEf=ec?`<span class="badge" style="background:${ec.bg};color:${ec.c}">${esc(i.effort)}</span>`:`<span class="badge-empty">—</span>`;
+  const bEf=renderSizeBadge(i.effort);
+  const mPr=pc?`<span class="badge" style="background:${pc.bg};color:${pc.c}">${renderPriorityBars(i.priority)}${esc(i.priority)}</span>`:`<span class="badge-empty">Priority</span>`;
+  const mTp=i.topic?bTp:`<span class="badge-empty">Topic</span>`;
+  const mEf=renderSizeBadge(i.effort,"Size");
   const due=i.dueDate||"";
   const dueLabel=due?formatDueDate(due):"";
   const dueTone=due?getDueTone(due):"";
@@ -1372,6 +1428,14 @@ function renderRow(i){
 <button class="desc-btn${i.desc?" has-desc":""}" onclick="openDesc('${i.id}')" title="Description / Details">
   <i class="ti ${i.desc ? 'ti-message-circle-filled' : 'ti-message-circle'}" style="font-size:14px"></i>
 </button>
+      </div>
+      <div class="mobile-meta">
+        <button type="button" onclick="openDD(event,'${i.id}','status')">${mSt}</button>
+        <button type="button" onclick="openDD(event,'${i.id}','priority')">${mPr}</button>
+        <button type="button" onclick="openDD(event,'${i.id}','topic')">${mTp}</button>
+        <button type="button" onclick="openDD(event,'${i.id}','effort')">${mEf}</button>
+        <span class="mobile-meta-control mobile-due-control" onclick="openDuePicker(event,'${i.id}')">${due?`<span class="due-pill set ${dueTone}">${esc(dueLabel)}<span class="due-x" onclick="clearDueDate(event,'${i.id}')" title="Clear due date"><i class="ti ti-x"></i></span></span>`:`<span class="due-pill empty" title="Set due date"><i class="ti ti-calendar"></i></span>`}<input class="due-native" id="due_mobile_${i.id}" type="date" value="${esc(due)}" onclick="event.stopPropagation()" onchange="setDueDateFromInput(event,'${i.id}',this.value)"></span>
+        <button type="button" onclick="openDD(event,'${i.id}','who')">${who}</button>
       </div>
     </td>
     <td class="td-badge" onclick="openDD(event,'${i.id}','status')"><div class="badge-inner">${bSt}</div></td>
@@ -1389,6 +1453,23 @@ function renderPriorityBars(priority){
   const level=levels[priority]||1;
   const cls=String(priority||"Low").toLowerCase();
   return `<span class="priority-bars level-${esc(cls)}" data-level="${level}" title="${esc(priority||"Low")} priority"><span></span><span></span><span></span><span></span></span>`;
+}
+function renderStatusIcon(status){
+  const col=S.status.colors[status]||S.status.colors.Open;
+  const cls={
+    "Open":"open",
+    "In Progress":"in-progress",
+    "Review":"review",
+    "Done":"done",
+    "Blocked":"blocked",
+    "Discarded":"discarded"
+  }[status]||"open";
+  return `<span class="status-icon ${cls}" style="--status-dot:${col.dot}" aria-hidden="true"></span>`;
+}
+function renderSizeBadge(size,emptyLabel="—"){
+  const col=size?S.effort.colors[size]:null;
+  if(!col)return `<span class="badge-empty">${esc(emptyLabel)}</span>`;
+  return `<span class="badge" style="background:${col.bg};color:${col.c}"><i class="ti ti-shirt" style="font-size:12px"></i>${esc(size)}</span>`;
 }
 
 function toggleGrp(key){collapsed[key]=!collapsed[key];persist();render();}
@@ -1462,7 +1543,7 @@ function clearDueDate(e,id){
 }
 function openDuePicker(e,id){
   e.stopPropagation();
-  const input=document.getElementById("due_"+id);
+  const input=e.currentTarget?.querySelector?.(".due-native")||document.getElementById("due_"+id);
   if(!input)return;
   input.focus({preventScroll:true});
   try{
@@ -1683,7 +1764,7 @@ function handleRowPointerUp(e,id){
   const mobileLike=window.matchMedia?.("(pointer: coarse)").matches||window.innerWidth<=760;
   if(!mobileLike)return;
   if(e.pointerType&&e.pointerType==="mouse")return;
-  if(e.target.closest("button,input,.td-badge,.td-who,.td-due,.badge-x,.del-btn,.topic-remove,.title-input"))return;
+  if(e.target.closest("button,input,.mobile-meta,.mobile-meta-control,.td-badge,.td-who,.td-due,.badge,.badge-empty,.due-pill,.badge-x,.del-btn,.topic-remove,.title-input"))return;
   e.preventDefault();
   e.stopPropagation();
   const wrap=e.currentTarget.querySelector(".title-wrap");
@@ -1808,7 +1889,9 @@ function openDD(e,id,field){
       const col=cfg.colors?.[opt];
       const el=document.createElement("div");
       el.className="dd-item"+(i[field]===opt?" active":"");
-      if(field==="priority")el.innerHTML=`${renderPriorityBars(opt)}${esc(opt)}`;
+      if(field==="status")el.innerHTML=`${renderStatusIcon(opt)}${esc(opt)}`;
+      else if(field==="priority")el.innerHTML=`${renderPriorityBars(opt)}${esc(opt)}`;
+      else if(field==="effort")el.innerHTML=`<i class="ti ti-shirt" style="font-size:14px;color:${col?.dot||"var(--text-2)"}"></i>${esc(opt)}`;
       else if(col)el.innerHTML=`<span class="dd-dot" style="background:${col.dot||col.bg}"></span>${esc(opt)}`;
       else el.textContent=opt;
       el.onclick=()=>{applyFieldFromDD(id,field,opt);closeDD();};
@@ -1829,18 +1912,56 @@ function openDD(e,id,field){
     inp.value=i[field]||"";
     const ok=document.createElement("button");ok.className="dd-ok";ok.innerHTML='<i class="ti ti-check"></i>';
     ok.onclick=()=>{applyFieldFromDD(id,field,inp.value.trim());closeDD();};
-    inp.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ok.click();}if(ev.key==="Escape")closeDD();ev.stopPropagation();});
+    let activeSuggestion=-1;
+    const suggestionEls=[];
+    function visibleSuggestions(){
+      return suggestionEls.filter(el=>el.style.display!=="none");
+    }
+    function setActiveSuggestion(idx){
+      const visible=visibleSuggestions();
+      suggestionEls.forEach(el=>el.classList.remove("active"));
+      activeSuggestion=visible.length?Math.max(0,Math.min(idx,visible.length-1)):-1;
+      if(activeSuggestion>=0)visible[activeSuggestion].classList.add("active");
+    }
+    function updateDropdownSuggestions(){
+      const q=inp.value.trim().toLowerCase();
+      suggestionEls.forEach(el=>{
+        const value=el.dataset.value||"";
+        el.style.display=!q||value.toLowerCase().includes(q)?"flex":"none";
+      });
+      const visible=visibleSuggestions();
+      const exact=visible.findIndex(el=>(el.dataset.value||"").toLowerCase()===q);
+      setActiveSuggestion(exact>=0?exact:0);
+    }
+    inp.addEventListener("input",updateDropdownSuggestions);
+    inp.addEventListener("keydown",ev=>{
+      if(ev.key==="ArrowDown"){ev.preventDefault();setActiveSuggestion(activeSuggestion+1);}
+      else if(ev.key==="ArrowUp"){ev.preventDefault();setActiveSuggestion(activeSuggestion-1);}
+      else if(ev.key==="Enter"){
+        const visible=visibleSuggestions();
+        if(activeSuggestion>=0&&visible[activeSuggestion]){
+          ev.preventDefault();
+          applyFieldFromDD(id,field,visible[activeSuggestion].dataset.value||"");
+          closeDD();
+        }else ok.click();
+      }
+      else if(ev.key==="Escape")closeDD();
+      ev.stopPropagation();
+    });
     row.appendChild(inp);row.appendChild(ok);pop.appendChild(row);
     const existing=[...new Set(issues.map(x=>x[field]).filter(Boolean))].sort();
     if(existing.length){
       const div=document.createElement("div");div.className="dd-divider";pop.appendChild(div);
       existing.forEach(v=>{
         const el=document.createElement("div");el.className="dd-item"+(i[field]===v?" active":"");
+        el.dataset.value=v;
         if(field==="who")el.innerHTML=`<span class="who-avatar" style="width:20px;height:20px;font-size:10px">${v.slice(0,2).toUpperCase()}</span>${esc(v)}`;
         else el.innerHTML=`<span class="dd-dot" style="background:#6161d6"></span><span style="flex:1">${esc(v)}</span><button class="topic-remove" onclick="removeTopicEverywhere(event,'${escAttr(v)}')" title="Delete topic from project"><i class="ti ti-trash"></i></button>`;
         el.onclick=()=>{applyFieldFromDD(id,field,v);closeDD();};
+        suggestionEls.push(el);
         pop.appendChild(el);
       });
+      updateDropdownSuggestions();
     }
     if(i[field]){
       const div2=document.createElement("div");div2.className="dd-divider";pop.appendChild(div2);
@@ -2214,6 +2335,7 @@ if(k==="c"){
 if(k==="2"||k==="i"||code==="Digit2"||code==="Numpad2"){e.preventDefault();setStatusForSelected("In Progress");return;}
   if(k==="r"||k==="3"||code==="Digit3"||code==="Numpad3"){e.preventDefault();setStatusForSelected("Review");return;}
   if(k==="b"||k==="5"||code==="Digit5"||code==="Numpad5"){e.preventDefault();setStatusForSelected("Blocked");return;}
+  if(k==="x"||k==="6"||code==="Digit6"||code==="Numpad6"){e.preventDefault();setStatusForSelected("Discarded");return;}
   if(k==="e"){e.preventDefault();exportJSON();return;}
 }
 
