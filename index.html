@@ -429,10 +429,16 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   .topbar-logo span{display:inline-block;max-width:none}
   .btn{padding:7px 11px}
   .project-switch-btn{width:134px}
-  .toolbar{top:50px;min-height:50px}
-  .tb-input{width:150px}
-  .tb-sel{max-width:130px}
-  input[type=text],textarea,.tb-input,.tb-sel,.dd-text-input,.title-input{font-size:16px}
+  .toolbar{top:50px;min-height:42px;padding:6px 8px;gap:6px}
+  .app-action-btn{min-width:86px;height:32px;font-size:12px;padding-left:10px;padding-right:10px}
+  .paste-action-btn{height:32px;font-size:12px;padding-left:9px;padding-right:9px}
+  .sw i{left:7px;font-size:13px}
+  .tb-input{width:112px;padding:5px 8px 5px 25px;font-size:16px}
+  .tb-sel{max-width:104px;padding:5px 6px;font-size:12px}
+  input[type=text],textarea,.dd-text-input,.title-input{font-size:16px}
+  .settings-popup{width:min(292px,calc(100vw - 16px));max-height:calc(100vh - 80px);overflow-y:auto}
+  .settings-item{min-height:40px;padding:9px 10px;font-size:13px}
+  .settings-row{padding:9px 0}
   .board{padding:10px 8px}
   .grp-head{padding:9px 10px}
   .grp{border-radius:8px}
@@ -1072,10 +1078,12 @@ function openSettingsMenu(e){
   renderSettingsMenu();
   const rect=e.currentTarget.getBoundingClientRect();
   pop.style.display="block";
-  let left=rect.right-292;
+  const popWidth=Math.min(292,window.innerWidth-16);
+  let left=rect.right-popWidth;
   let top=rect.bottom+6;
   if(left<8)left=8;
-  if(left+292>window.innerWidth-8)left=window.innerWidth-300;
+  if(left+popWidth>window.innerWidth-8)left=window.innerWidth-popWidth-8;
+  if(top+pop.offsetHeight>window.innerHeight-8)top=Math.max(8,window.innerHeight-pop.offsetHeight-8);
   pop.style.left=left+"px";pop.style.top=top+"px";
   settingsMenuOpen=true;
 }
@@ -2002,11 +2010,16 @@ function dismissDDOnPageMove(e){
   if(e.target?.closest?.("#ddPop"))return;
   closeDD();
 }
+function dismissFloatingMenusOnPageMove(e){
+  if(settingsMenuOpen&&!e.target?.closest?.("#settingsPop"))closeSettingsMenu();
+  if(projectMenuOpen&&!e.target?.closest?.("#projectPop"))closeProjectMenu();
+  dismissDDOnPageMove(e);
+}
 
 document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();if(settingsMenuOpen)closeSettingsMenu();closeTopicSuggest();});
-window.addEventListener("scroll",dismissDDOnPageMove,{capture:true,passive:true});
-window.addEventListener("wheel",dismissDDOnPageMove,{passive:true});
-window.addEventListener("touchmove",dismissDDOnPageMove,{passive:true});
+window.addEventListener("scroll",dismissFloatingMenusOnPageMove,{capture:true,passive:true});
+window.addEventListener("wheel",dismissFloatingMenusOnPageMove,{passive:true});
+window.addEventListener("touchmove",dismissFloatingMenusOnPageMove,{passive:true});
 document.addEventListener("paste",handlePasteIssues);
 document.addEventListener("keydown",e=>{
   const k=e.key.toLowerCase();
