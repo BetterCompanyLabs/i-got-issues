@@ -796,7 +796,7 @@ opts:["Open","In Progress","Review","Done","Blocked","Discarded"],
       "In Progress": {bg:"#fef3c7",c:"#92400e",dot:"#f59e0b"},
       "Review":    {bg:"#F6EAF5",c:"#9B5A92",dot:"#C97BBF"},
       "Done":        {bg:"#d1fae5",c:"#065f46",dot:"#10b981"},
-      "Blocked":     {bg:"#fee2e2",c:"#991b1b",dot:"#dc2626"},
+      "Blocked":     {bg:"#fee2e2",c:"#991b1b",dot:"#ef4444"},
       "Discarded":   {bg:"#f3f4f6",c:"#4b5563",dot:"#9ca3af"},
     }
   },
@@ -1883,6 +1883,7 @@ function openDD(e,id,field){
   const i=issues.find(x=>x.id===id);
   const pop=document.getElementById("ddPop");
   pop.innerHTML="";
+  let focusAfterOpen=null;
 
   if(field==="status"||field==="priority"||field==="effort"){
     const cfg=S[field];
@@ -1970,7 +1971,7 @@ function openDD(e,id,field){
       clr.innerHTML=`<i class="ti ti-x" style="font-size:12px"></i> Clear`;clr.style.color="var(--text-2)";clr.style.fontSize="12px";
       clr.onclick=()=>{applyFieldFromDD(id,field,"");closeDD();};pop.appendChild(clr);
     }
-    setTimeout(()=>inp.focus(),30);
+    focusAfterOpen=inp;
   }
 
   const rect=e.currentTarget.getBoundingClientRect();
@@ -1983,11 +1984,29 @@ function openDD(e,id,field){
   if(top+300>window.innerHeight)top=rect.top-Math.min(300,pop.scrollHeight+8);
   pop.style.left=left+"px";pop.style.top=top+"px";
   ddActive=true;
+  if(focusAfterOpen){
+    focusAfterOpen.focus({preventScroll:true});
+    focusAfterOpen.select();
+    requestAnimationFrame(()=>{
+      if(ddActive&&document.body.contains(focusAfterOpen)){
+        focusAfterOpen.focus({preventScroll:true});
+        focusAfterOpen.select();
+      }
+    });
+  }
 }
 
 function closeDD(){document.getElementById("ddPop").style.display="none";ddActive=false;ddId=null;ddField=null;}
+function dismissDDOnPageMove(e){
+  if(!ddActive)return;
+  if(e.target?.closest?.("#ddPop"))return;
+  closeDD();
+}
 
 document.addEventListener("click",()=>{if(ddActive)closeDD();if(projectMenuOpen)closeProjectMenu();if(settingsMenuOpen)closeSettingsMenu();closeTopicSuggest();});
+window.addEventListener("scroll",dismissDDOnPageMove,{capture:true,passive:true});
+window.addEventListener("wheel",dismissDDOnPageMove,{passive:true});
+window.addEventListener("touchmove",dismissDDOnPageMove,{passive:true});
 document.addEventListener("paste",handlePasteIssues);
 document.addEventListener("keydown",e=>{
   const k=e.key.toLowerCase();
