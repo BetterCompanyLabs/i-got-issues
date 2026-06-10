@@ -77,6 +77,7 @@
 :root[data-theme="light"] .due-pill.overdue{background:#fee2e2!important;color:#991b1b!important}
 :root[data-theme="light"] .due-pill.today{background:#fef3c7!important;color:#92400e!important}
 :root[data-theme="light"] .due-pill.future{background:#dbeafe!important;color:#1e40af!important}
+:root[data-theme="light"] .due-pill.done{background:#d1fae5!important;color:#065f46!important}
 :root[data-theme="light"] .due-pill.empty{background:#f5f5f5!important;color:#aaa!important}
 :root[data-theme="light"] .due-native{color-scheme:light}
 :root[data-theme="dark"] .due-pill{background:#2a2a45!important;color:#9999bb!important}
@@ -84,6 +85,7 @@
 :root[data-theme="dark"] .due-pill.overdue{background:#3a2430!important;color:#ffb4b4!important}
 :root[data-theme="dark"] .due-pill.today{background:#3a3120!important;color:#ffd98a!important}
 :root[data-theme="dark"] .due-pill.future{background:#263354!important;color:#b8ccff!important}
+:root[data-theme="dark"] .due-pill.done{background:#17382c!important;color:#8ff0c0!important}
 :root[data-theme="dark"] .due-pill.empty{background:#2a2a45!important;color:#666!important}
 :root[data-theme="dark"] .due-native{color-scheme:dark}
 .theme-toggle{width:34px;height:30px;justify-content:center;padding:6px 9px}
@@ -128,7 +130,7 @@ body.hotkey-strip-expanded{padding-bottom:calc(var(--footer-h) + var(--hotkey-st
 .toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:10px;min-height:44px;position:sticky;top:52px;z-index:55;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .sw{position:relative;display:flex;align-items:center}
 .sw i{position:absolute;left:8px;font-size:14px;color:var(--text-2);pointer-events:none}
-.tb-input{padding:5px 24px 5px 28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;color:var(--text);width:80px;font-family:inherit;outline:none}
+.tb-input{padding:5px 24px 5px 28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;color:var(--text);width:96px;font-family:inherit;outline:none}
 .tb-input::placeholder{font-size:12px;color:var(--text-2)}
 .tb-input:focus{border-color:var(--purple)}
 .search-clear{position:absolute;right:5px;width:16px;height:16px;border:none;border-radius:50%;background:transparent;color:var(--text-3);display:none;align-items:center;justify-content:center;cursor:pointer;padding:0}
@@ -177,7 +179,12 @@ body.issue-dividers .irow td{border-right:1px solid var(--border)}
 body.issue-dividers .irow td:last-child{border-right:none}
 .td-cb{width:var(--cb-col-w);text-align:center;padding:0 6px}
 .td-cb input,.group-select{display:block;margin:0 auto}
-.td-cb input,.group-select{accent-color:var(--purple);cursor:pointer;width:13px;height:13px}
+.td-cb input,.group-select{appearance:none;display:grid;place-content:center;cursor:pointer;width:13px;height:13px;border:1.5px solid color-mix(in srgb,var(--border-hover) 62%,transparent);border-radius:4px;background:transparent}
+.td-cb input::before,.group-select::before{content:"";width:7px;height:7px;border-radius:2px;transform:scale(0);transition:transform .08s;background:#fff}
+.td-cb input:checked,.group-select:checked{border-color:var(--purple);background:var(--purple)}
+.td-cb input:checked::before,.group-select:checked::before{transform:scale(1)}
+.group-select:indeterminate{border-color:var(--purple);background:var(--purple)}
+.group-select:indeterminate::before{width:7px;height:2px;border-radius:2px;transform:scale(1)}
 .td-title{min-width:320px;width:auto;padding:0}
 .title-wrap{display:flex;align-items:center;gap:7px;padding:0 10px;height:40px}
 .mobile-meta{display:none}
@@ -205,13 +212,12 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .status-icon.blocked{background:currentColor}
 .status-icon.discarded{background:currentColor}
 .status-icon.discarded::after{content:"";position:absolute;width:8px;height:1.7px;border-radius:2px;background:#fff}
-.title-text{font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;padding:3px 5px;border-radius:4px;border:1.5px solid transparent}
+.title-text{font-size:13px;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;padding:2px 3px;border-radius:4px;border:1.5px solid transparent}
 .title-text:hover{background:var(--bg);border-color:var(--border)}
 .title-input{font-size:13px;flex:1;border:1.5px solid var(--purple);border-radius:4px;padding:3px 6px;outline:none;font-family:inherit;background:var(--surface);color:var(--text);min-width:0;box-shadow:0 0 0 3px rgba(97,97,214,.12)}
-.desc-btn{opacity:0;display:flex;align-items:center;gap:2px;width:0;padding:3px 0;border-radius:4px;cursor:pointer;color:var(--text-2);border:none;background:none;flex-shrink:0;font-size:13px;overflow:hidden;transition:all .1s}
+.desc-btn{opacity:1;display:flex;align-items:center;justify-content:center;gap:2px;width:18px;padding:3px 2px;border-radius:4px;cursor:pointer;color:color-mix(in srgb,var(--text-3) 50%,transparent);border:none;background:none;flex-shrink:0;font-size:13px;overflow:hidden;transition:background .1s,color .1s}
 .desc-btn:hover{background:var(--purple-light);color:var(--purple)}
-.irow:hover .desc-btn,.desc-btn.cell-focus{opacity:1;width:18px;padding:3px 2px}
-.desc-btn.has-desc{opacity:1;width:18px;padding:3px 2px;color:var(--purple)}
+.desc-btn.has-desc{color:var(--purple)}
 .desc-btn.has-desc:hover{background:var(--purple-light);color:var(--purple)}
 .hdr-row th.sortable{cursor:pointer;user-select:none}
 .hdr-row th.sortable:hover{color:var(--purple)}
@@ -220,6 +226,14 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .td-badge:hover .badge-inner{filter:brightness(.95)}
 .badge-inner{display:flex;align-items:center;justify-content:center;height:40px;padding:0 6px}
 .badge{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap;min-width:64px;text-align:center;cursor:pointer}
+.badge-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topic-badge .badge-label{text-overflow:clip}
+.td-badge[data-cell="topic"] .badge-inner{padding:0 8px}
+.td-badge[data-cell="topic"] .topic-badge{min-width:0;max-width:100%;justify-content:flex-start}
+.td-badge[data-cell="topic"] .topic-badge .badge-label{flex:0 1 auto}
+.td-badge[data-cell="effort"] .badge-inner{padding:0 8px}
+.td-badge[data-cell="effort"] .badge{min-width:0;padding:4px 8px}
+.td-badge[data-cell="effort"] .size-empty{min-width:0;padding:4px 8px}
 .td-badge .badge .badge-x{margin-left:-3px}
 .badge-empty{display:inline-block;padding:4px 10px;border-radius:4px;font-size:12px;color:#bbb;background:#f5f5f5;min-width:64px;text-align:center}
 .td-who{width:75px;min-width:75px;text-align:center;cursor:pointer}
@@ -231,6 +245,7 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .due-pill.overdue{background:#fee2e2;color:#991b1b}
 .due-pill.today{background:#fef3c7;color:#92400e}
 .due-pill.future{background:#dbeafe;color:#1e40af}
+.due-pill.done{background:#d1fae5;color:#065f46}
 .due-pill i{font-size:13px;line-height:1}
 .due-x{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;font-size:10px;line-height:1;opacity:.65;margin-right:-4px}
 .due-x i{font-size:10px;line-height:1}
@@ -278,6 +293,11 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .modal-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px}
 .field-lbl{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
 .field-lbl-inline{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.5px;width:90px;flex-shrink:0}
+.desc-attrs{display:flex;flex-wrap:wrap;gap:7px}
+.desc-attrs button{border:none;background:transparent;padding:0;margin:0;font-family:inherit;cursor:pointer;display:inline-flex}
+.desc-attrs .mobile-due-control{position:relative}
+.desc-attrs .badge,.desc-attrs .badge-empty,.desc-attrs .due-pill{min-width:0}
+.desc-attrs .badge-empty{display:inline-flex;align-items:center;justify-content:center;gap:6px}
 input[type=text],textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);outline:none;transition:border-color .12s}
 input[type=text]:focus,textarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(97,97,214,.1)}
 textarea{min-height:120px;resize:vertical;line-height:1.6}
@@ -380,17 +400,19 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .toolbar>*{flex-shrink:0}
 .board{width:100%}
 .grp{max-width:100%}
-.tbl{table-layout:fixed;min-width:962px}
-.tbl col:nth-child(2){width:320px !important}
-.tbl col:nth-child(3){width:93px !important}
-.tbl col:nth-child(4){width:97px !important}
+.tbl{table-layout:fixed;min-width:920px}
+.tbl col:nth-child(2){width:auto !important}
+.tbl col:nth-child(3){width:96px !important}
+.tbl col:nth-child(4){width:84px !important}
 .tbl col:nth-child(5){width:115px !important}
-.tbl col:nth-child(6){width:87px !important}
-.tbl col:nth-child(7){width:101px !important}
-.tbl col:nth-child(8){width:75px !important}
-.hdr-row th.th-title,.td-title{min-width:320px}
+.tbl col:nth-child(6){width:66px !important}
+.tbl col:nth-child(7){width:96px !important}
+.tbl col:nth-child(8){width:58px !important}
+.tbl col:nth-child(9){width:40px !important}
+.hdr-row th.th-title,.td-title{min-width:360px}
 .title-wrap{min-width:0}
 .title-text{min-width:0}
+.td-badge .badge,.td-badge .badge-empty{max-width:100%;overflow:hidden;text-overflow:ellipsis}
 
 @media(min-width:901px){
   .grp{overflow:visible}
@@ -477,9 +499,9 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   .irow .td-title{grid-column:2;min-width:0;width:100%}
   .irow .td-badge,.irow .td-due,.irow .td-who,.irow .td-act{display:none!important}
   .add-row-tr,.add-row-tr td{display:block;width:100%}
-  .title-wrap{height:auto;min-height:28px;padding:0 8px 0 2px;align-items:center}
+  .title-wrap{height:auto;min-height:28px;padding:0 4px 0 0;gap:4px;align-items:center}
   .title-wrap>.priority-bars{display:none}
-  .title-text{white-space:normal;line-height:1.35}
+  .title-text{white-space:nowrap;line-height:1.25}
   .desc-btn{opacity:1}
   .mobile-meta{display:flex;flex-wrap:wrap;gap:5px;padding:3px 8px 0 2px}
   .mobile-meta button,.mobile-meta-control{border:none;background:transparent;padding:0;margin:0;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center}
@@ -500,6 +522,80 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   .mobile-meta .due-pill.set::before{content:none}
   .mobile-meta .who-avatar,.mobile-meta .who-empty{width:22px;height:22px;font-size:9px}
 }
+
+body.view-badges .grp,
+body.view-min .grp{overflow:visible}
+body.view-badges .tbl,
+body.view-min .tbl{display:block;width:100%;min-width:0;table-layout:auto}
+body.view-badges .tbl tbody,
+body.view-min .tbl tbody{display:block;width:100%}
+body.view-badges .tbl col:nth-child(n+3),
+body.view-min .tbl col:nth-child(n+3){display:none}
+body.view-badges .hdr-row,
+body.view-min .hdr-row{display:none}
+body.view-badges .irow,
+body.view-min .irow{display:grid;width:100%;grid-template-columns:var(--cb-col-w) minmax(0,1fr);align-items:start;padding:8px 0}
+body.view-badges .irow td,
+body.view-min .irow td{display:block;height:auto;border:0!important}
+body.view-badges .irow .td-cb,
+body.view-min .irow .td-cb{grid-column:1;padding-top:8px}
+body.view-badges .irow .td-title,
+body.view-min .irow .td-title{grid-column:2;min-width:0;width:100%}
+body.view-badges .irow .td-badge,
+body.view-badges .irow .td-due,
+body.view-badges .irow .td-who,
+body.view-badges .irow .td-act,
+body.view-min .irow .td-badge,
+body.view-min .irow .td-due,
+body.view-min .irow .td-who,
+body.view-min .irow .td-act{display:none!important}
+body.view-badges .add-row-tr,
+body.view-badges .add-row-tr td,
+body.view-min .add-row-tr,
+body.view-min .add-row-tr td{display:block;width:100%}
+body.view-badges .title-wrap,
+body.view-min .title-wrap{height:auto;min-height:28px;padding:0 4px 0 0;gap:4px;align-items:center}
+body.view-badges .title-wrap>.priority-bars,
+body.view-min .title-wrap>.priority-bars{display:none}
+body.view-badges .title-text,
+body.view-min .title-text{white-space:nowrap;line-height:1.25}
+body.view-badges .desc-btn,
+body.view-min .desc-btn{opacity:1}
+body.view-badges .mobile-meta{display:flex;flex-wrap:wrap;gap:5px;padding:3px 8px 0 2px}
+body.view-badges .mobile-meta button,
+body.view-badges .mobile-meta-control{border:none;background:transparent;padding:0;margin:0;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center}
+body.view-badges .mobile-due-control{position:relative}
+body.view-badges .mobile-meta .badge,
+body.view-badges .mobile-meta .badge-empty{min-width:0;padding:3px 7px;font-size:10px}
+body.view-badges .mobile-meta .badge{gap:4px}
+body.view-badges .mobile-meta .status-icon{width:10px;height:10px;border-width:1.5px}
+body.view-badges .mobile-meta .status-icon.done::after{font-size:7px}
+body.view-badges .mobile-meta .status-icon.discarded::after{width:6px;height:1.5px}
+body.view-badges .mobile-meta .priority-bars{width:12px;height:11px;gap:1px}
+body.view-badges .mobile-meta .priority-bars span{width:2.5px}
+body.view-badges .mobile-meta .priority-bars span:nth-child(1){height:3px}
+body.view-badges .mobile-meta .priority-bars span:nth-child(2){height:5px}
+body.view-badges .mobile-meta .priority-bars span:nth-child(3){height:8px}
+body.view-badges .mobile-meta .priority-bars span:nth-child(4){height:10px}
+body.view-badges .mobile-meta .due-pill{min-width:0;max-width:none;padding:3px 7px;font-size:10px}
+body.view-badges .mobile-meta .due-pill.set{font-size:10px}
+body.view-badges .mobile-meta .due-pill.set::before{content:none}
+body.view-badges .mobile-meta .who-avatar,
+body.view-badges .mobile-meta .who-empty{width:22px;height:22px;font-size:9px}
+.mini-meta{display:none;align-items:center;gap:4px;flex-shrink:0}
+body.view-min .mini-meta{display:inline-flex}
+body.view-min .mobile-meta{display:none}
+.mini-meta button{border:none;padding:0;margin:0;background:transparent;cursor:pointer;display:inline-flex;position:relative}
+.mini-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:22px;border-radius:4px;flex-shrink:0}
+.mini-badge .status-icon{width:11px;height:11px;border-width:1.6px}
+.mini-badge .priority-bars{width:13px;height:12px;gap:1px}
+.mini-badge .priority-bars span{width:2.5px}
+.mini-badge .priority-bars span:nth-child(1){height:3px}
+.mini-badge .priority-bars span:nth-child(2){height:6px}
+.mini-badge .priority-bars span:nth-child(3){height:9px}
+.mini-badge .priority-bars span:nth-child(4){height:12px}
+.mini-badge i{font-size:14px}
+.mini-badge.empty{background:#f3f4f6;color:var(--text-3)}
 
 
 /* --- Polished empty state + footer --- */
@@ -617,7 +713,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 <div class="toolbar">
   <button class="btn app-action-btn" onclick="addIssueTop()">New issue</button>
   <button class="btn ghost paste-action-btn" onclick="quickPasteOrOpenModal()" title="Paste issues"><i class="ti ti-clipboard-plus"></i> Paste</button>
-  <div class="sw"><i class="ti ti-search"></i><input class="tb-input" placeholder="..." aria-label="Search" id="qSearch" oninput="render()"><button class="search-clear" id="qSearchClear" type="button" onclick="clearSearch()" title="Clear search"><i class="ti ti-x"></i></button></div>
+  <div class="sw"><i class="ti ti-search"></i><input class="tb-input" placeholder="Search" aria-label="Search" id="qSearch" oninput="render()"><button class="search-clear" id="qSearchClear" type="button" onclick="clearSearch()" title="Clear search"><i class="ti ti-x"></i></button></div>
   <div class="sep"></div>
   <span class="tb-label">Group by:</span>
 <select class="tb-sel" id="qGroup" onchange="this.blur();render()">
@@ -714,6 +810,10 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
       <div>
         <div class="field-lbl">Description</div>
         <textarea id="descTextarea" placeholder="Detailed description, reproduction steps, acceptance criteria..."></textarea>
+      </div>
+      <div>
+        <div class="field-lbl">Attributes</div>
+        <div class="desc-attrs" id="descAttrs"></div>
       </div>
     </div>
     <div class="modal-foot">
@@ -860,6 +960,8 @@ const THEME_KEY="i_got_issues_theme_v1";
 const HOTKEY_STRIP_KEY="i_got_issues_hotkey_strip_v1";
 const ISSUE_DIVIDERS_KEY="i_got_issues_issue_dividers_v1";
 const FONT_MODE_KEY="i_got_issues_font_mode_v1";
+const COMPACT_VIEW_KEY="i_got_issues_compact_view_v1";
+const VIEW_MODE_KEY="i_got_issues_view_mode_v1";
 
 function applySavedTheme(){
   const saved=localStorage.getItem(THEME_KEY);
@@ -869,8 +971,11 @@ function applySavedTheme(){
 function applyAppearanceSettings(){
   const dividers=localStorage.getItem(ISSUE_DIVIDERS_KEY)==="on";
   const fontMode=localStorage.getItem(FONT_MODE_KEY)==="code"?"code":"default";
+  const savedView=localStorage.getItem(VIEW_MODE_KEY);
+  const viewMode=["table","badges","min"].includes(savedView)?savedView:(localStorage.getItem(COMPACT_VIEW_KEY)==="on"?"badges":"table");
   document.body.classList.toggle("issue-dividers",dividers);
   document.body.classList.toggle("font-code",fontMode==="code");
+  applyViewMode(viewMode);
 }
 function getEffectiveTheme(){
   const explicit=document.documentElement.getAttribute("data-theme");
@@ -889,6 +994,18 @@ function toggleTheme(){
   document.documentElement.setAttribute("data-theme",next);
   localStorage.setItem(THEME_KEY,next);
   updateThemeButton();
+}
+function applyViewMode(mode){
+  const next=["table","badges","min"].includes(mode)?mode:"table";
+  document.body.classList.toggle("view-badges",next==="badges");
+  document.body.classList.toggle("view-min",next==="min");
+}
+function setViewMode(mode){
+  const next=["table","badges","min"].includes(mode)?mode:"table";
+  localStorage.setItem(VIEW_MODE_KEY,next);
+  localStorage.removeItem(COMPACT_VIEW_KEY);
+  applyViewMode(next);
+  renderSettingsMenu();
 }
 function applyHotkeyStripState(){
   const strip=document.getElementById("hotkeyStrip");
@@ -966,18 +1083,37 @@ function parseTitleTopic(raw){
     return {title:original,topic:null};
   }
   const title=match[1].trim();
-  const topic=match[2].trim();
+  const topic=normalizeTopicLabel(match[2]);
   if(!title||!topic){
     return {title:original,topic:null};
   }
   return {title,topic};
 }
 
+function uniqueTopics(values){
+  const seen=new Set();
+  const out=[];
+  values.filter(Boolean).forEach(topic=>{
+    const clean=String(topic).trim();
+    if(!clean)return;
+    const key=clean.toLowerCase();
+    if(seen.has(key))return;
+    seen.add(key);
+    out.push(clean);
+  });
+  return out.sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"}));
+}
 function getExistingTopics(){
   const fromIssues=issues.map(i=>i.topic).filter(Boolean);
   const topicSelect=document.getElementById("qTo");
   const fromSelect=topicSelect?[...topicSelect.options].map(o=>o.value).filter(Boolean):[];
-  return [...new Set([...fromIssues,...fromSelect])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"}));
+  return uniqueTopics([...fromIssues,...fromSelect]);
+}
+function normalizeTopicLabel(topic){
+  const clean=String(topic||"").trim();
+  if(!clean)return "";
+  const existing=getExistingTopics().find(t=>t.toLowerCase()===clean.toLowerCase());
+  return existing||clean;
 }
 function getTopicToken(input){
   if(!input)return null;
@@ -1106,6 +1242,7 @@ function renderSettingsMenu(){
   const pop=document.getElementById("settingsPop");
   const dividers=document.body.classList.contains("issue-dividers");
   const codeFont=document.body.classList.contains("font-code");
+  const viewMode=document.body.classList.contains("view-min")?"min":document.body.classList.contains("view-badges")?"badges":"table";
   pop.innerHTML=`
     <button class="settings-item muted" type="button"><i class="ti ti-user-circle"></i><span>Profile</span><small>Soon</small></button>
     <div class="settings-divider"></div>
@@ -1117,6 +1254,14 @@ function renderSettingsMenu(){
       <div class="settings-row">
         <div class="settings-row-label"><span>Show row & cell lines</span></div>
         <label class="switch"><input type="checkbox" ${dividers?"checked":""} onchange="setIssueDividers(this.checked)"><span></span></label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label"><span>Issue view</span></div>
+        <div class="font-choice">
+          <button type="button" class="${viewMode==="table"?"active":""}" onclick="setViewMode('table')">Table</button>
+          <button type="button" class="${viewMode==="badges"?"active":""}" onclick="setViewMode('badges')">Badges</button>
+          <button type="button" class="${viewMode==="min"?"active":""}" onclick="setViewMode('min')">Min</button>
+        </div>
       </div>
       <div class="settings-row">
         <div class="settings-row-label"><span>Choose your font</span></div>
@@ -1327,7 +1472,7 @@ function render(){
   // update topic filter
   const toSel=document.getElementById("qTo");
   const curTo=toSel.value;
-  const topics=[...new Set(issues.map(i=>i.topic).filter(Boolean))].sort();
+  const topics=uniqueTopics(issues.map(i=>i.topic));
   toSel.innerHTML='<option value="">All Topics</option>'+topics.map(t=>`<option${t===curTo?" selected":""}>${esc(t)}</option>`).join("");
 
   updateStatsPills();
@@ -1381,7 +1526,7 @@ function renderGroup(name,items,dotColor,key){
   const groupBg=getGroupHeaderBg(key);
   const body=isColl?"":`
     <table class="tbl">
-      <colgroup><col style="width:var(--cb-col-w)"><col><col style="width:93px"><col style="width:97px"><col style="width:115px"><col style="width:87px"><col style="width:101px"><col style="width:75px"><col style="width:44px"></colgroup>
+      <colgroup><col style="width:var(--cb-col-w)"><col><col style="width:96px"><col style="width:84px"><col style="width:115px"><col style="width:66px"><col style="width:96px"><col style="width:58px"><col style="width:40px"></colgroup>
       <thead><tr class="hdr-row">
         <th><input type="checkbox" class="group-select" ${allSelected?"checked":""} ${someSelected&&!allSelected?'data-indeterminate="true"':""} onclick="event.stopPropagation()" onchange='toggleSelectGroup(${JSON.stringify(itemIds)},this.checked)'></th>
       <th class="th-title sortable" onclick="cycleHeaderSort('title')">Issue</th>
@@ -1439,15 +1584,16 @@ function renderRow(i){
   const bSt=`<span class="badge" style="background:${sc.bg};color:${sc.c}">${esc(status)}</span>`;
   const mSt=`<span class="badge" style="background:${sc.bg};color:${sc.c}">${renderStatusIcon(status)}${esc(status)}</span>`;
   const bPr=pc?`<span class="badge" style="background:${pc.bg};color:${pc.c}">${esc(i.priority)}</span>`:`<span class="badge-empty">—</span>`;
-  const bTp=i.topic?`<span class="badge" style="background:#ede8fe;color:#3c3489">${esc(i.topic)}<span class="badge-x" onclick="clearTopic(event,'${i.id}')"><i class="ti ti-x"></i></span></span>`:`<span class="badge-empty">—</span>`;
+  const bTp=i.topic?`<span class="badge topic-badge" style="background:#ede8fe;color:#3c3489"><span class="badge-label">${esc(i.topic)}</span><span class="badge-x" onclick="clearTopic(event,'${i.id}')"><i class="ti ti-x"></i></span></span>`:`<span class="badge-empty">—</span>`;
   const bEf=renderSizeBadge(i.effort);
   const mPr=pc?`<span class="badge" style="background:${pc.bg};color:${pc.c}">${renderPriorityBars(i.priority)}${esc(i.priority)}</span>`:`<span class="badge-empty">Priority</span>`;
   const mTp=i.topic?bTp:`<span class="badge-empty">Topic</span>`;
   const mEf=renderSizeBadge(i.effort,"Size");
   const due=i.dueDate||"";
   const dueLabel=due?formatDueDate(due):"";
-  const dueTone=due?getDueTone(due):"";
+  const dueTone=due?getDueTone(due,status):"";
   const who=i.who?`<span class="who-avatar" title="${esc(i.who)}">${esc(i.who.slice(0,2).toUpperCase())}</span>`:`<span class="who-empty"><i class="ti ti-user" style="font-size:13px"></i></span>`;
+  const miniMeta=renderMiniMeta(i.id,status,i.priority,i.effort,due,dueTone);
   const done=status==="Done"?"text-decoration:line-through;opacity:.45":"";
   const focusCol=cellFocus.id===i.id?cellFocus.col:"";
   const focusClass=col=>focusCol===col?" cell-focus":"";
@@ -1456,6 +1602,7 @@ function renderRow(i){
     <td class="td-title">
       <div class="title-wrap${focusClass("title")}" data-cell="title">
         ${renderPriorityBars(i.priority)}
+        ${miniMeta}
         <span class="title-text" style="${done}" onclick="startTitleEdit(event,'${i.id}')" title="${esc(i.title)}">${esc(i.title)||"<em style='opacity:.4'>Title...</em>"}</span>
 <button class="desc-btn${i.desc?" has-desc":""}${focusClass("desc")}" data-cell="desc" onclick="openDesc('${i.id}')" title="Description / Details">
   <i class="ti ${i.desc ? 'ti-message-circle-filled' : 'ti-message-circle'}" style="font-size:14px"></i>
@@ -1482,9 +1629,28 @@ function renderRow(i){
 
 function renderPriorityBars(priority){
   const levels={Low:1,Medium:2,High:3,Critical:4};
-  const level=levels[priority]||1;
+  const level=levels[priority]||0;
   const cls=String(priority||"Low").toLowerCase();
   return `<span class="priority-bars level-${esc(cls)}" data-level="${level}" title="${esc(priority||"Low")} priority"><span></span><span></span><span></span><span></span></span>`;
+}
+function renderMiniMeta(id,status,priority,effort,due,dueTone){
+  const sc=S.status.colors[status]||S.status.colors.Open;
+  const pc=priority?S.priority.colors[priority]:null;
+  const ec=effort?S.effort.colors[effort]:null;
+  const dueColors={
+    overdue:{bg:"#fee2e2",c:"#991b1b"},
+    today:{bg:"#fef3c7",c:"#92400e"},
+    future:{bg:"#dbeafe",c:"#1e40af"},
+    done:{bg:"#d1fae5",c:"#065f46"},
+    "":{bg:"#f3f4f6",c:"var(--text-3)"}
+  };
+  const dc=dueColors[dueTone]||dueColors[""];
+  return `<span class="mini-meta">
+    <button type="button" onclick="openDD(event,'${escAttr(id)}','status')" title="${esc(status)}"><span class="mini-badge" style="background:${sc.bg};color:${sc.c}">${renderStatusIcon(status)}</span></button>
+    <button type="button" onclick="openDD(event,'${escAttr(id)}','priority')" title="${esc(priority||"Set priority")}"><span class="mini-badge${pc?"":" empty"}" style="background:${pc?pc.bg:"#f3f4f6"};color:${pc?pc.c:"var(--text-3)"}">${renderPriorityBars(priority)}</span></button>
+    <button type="button" onclick="openDD(event,'${escAttr(id)}','effort')" title="${esc(effort||"Set size")}"><span class="mini-badge${ec?"":" empty"}" style="background:${ec?ec.bg:"#f3f4f6"};color:${ec?ec.c:"var(--text-3)"}"><i class="ti ti-shirt"></i></span></button>
+    <button type="button" onclick="openDuePicker(event,'${escAttr(id)}')" title="Due date"><span class="mini-badge" style="background:${dc.bg};color:${dc.c}"><i class="ti ti-calendar"></i></span><input class="due-native" id="due_mini_${escAttr(id)}" type="date" value="${esc(due||"")}" onclick="event.stopPropagation()" onchange="setDueDateFromInput(event,'${escAttr(id)}',this.value)"></button>
+  </span>`;
 }
 function renderStatusIcon(status){
   const col=S.status.colors[status]||S.status.colors.Open;
@@ -1500,7 +1666,7 @@ function renderStatusIcon(status){
 }
 function renderSizeBadge(size,emptyLabel="—"){
   const col=size?S.effort.colors[size]:null;
-  if(!col)return `<span class="badge-empty">${esc(emptyLabel)}</span>`;
+  if(!col)return `<span class="badge-empty size-empty">${esc(emptyLabel)}</span>`;
   return `<span class="badge" style="background:${col.bg};color:${col.c}"><i class="ti ti-shirt" style="font-size:12px"></i>${esc(size)}</span>`;
 }
 
@@ -1511,6 +1677,7 @@ function setField(id,field,val){
 }
 function setFieldForIds(ids,field,val){
   const idSet=new Set(ids);
+  if(field==="topic")val=normalizeTopicLabel(val);
   let changed=0;
   issues.forEach(i=>{
     if(!idSet.has(i.id))return;
@@ -1519,7 +1686,7 @@ function setFieldForIds(ids,field,val){
     if(field==="status")i.done=val==="Done";
     changed++;
   });
-  if(changed){persist();render();}
+  if(changed){persist();render();updateDescAttrs();}
 }
 function getBulkTargetIds(id){
   const ids=getSelectedIds();
@@ -1570,8 +1737,9 @@ function todayISO(){
   const pad=n=>String(n).padStart(2,"0");
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 }
-function getDueTone(iso){
+function getDueTone(iso,status=""){
   if(!iso)return"";
+  if(status==="Done")return"done";
   const today=todayISO();
   if(iso<today)return"overdue";
   if(iso===today)return"today";
@@ -1961,7 +2129,7 @@ function beginTitleEdit(wrap,id){
       i.title=parsed.title;
     }
     if(parsed.topic){
-      i.topic=parsed.topic;
+      i.topic=normalizeTopicLabel(parsed.topic);
     }
     persist();render();
     if(openNext&&titleEditSequenceActive)setTimeout(()=>editNextSelectedIssueTitle(id),45);
@@ -2477,7 +2645,7 @@ function makeIssueFromTitle(rawTitle){
     title:parsed.title||"New Issue",
     status:f.st||"Open",
     priority:f.pr||"Medium",
-    topic:parsed.topic||f.to||"",
+    topic:normalizeTopicLabel(parsed.topic||f.to||""),
     effort:"",
     who:"",
     dueDate:"",
@@ -2487,7 +2655,7 @@ function makeIssueFromTitle(rawTitle){
 }
 function makeIssueFromPasteItem(item){
   const issue=makeIssueFromTitle(item.title);
-  if(item.topic)issue.topic=item.topic;
+  if(item.topic)issue.topic=normalizeTopicLabel(item.topic);
   issue.desc=(item.descLines||[]).filter(Boolean).join("\n");
   return issue;
 }
@@ -2606,6 +2774,7 @@ function openDesc(id){
   document.getElementById("descTitleInput").value=i.title;
   const desc=document.getElementById("descTextarea");
   desc.value=i.desc||"";
+  updateDescAttrs();
   desc.onkeydown=ev=>{
     if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==="s"){
       ev.preventDefault();
@@ -2627,6 +2796,35 @@ function openDesc(id){
   setTimeout(()=>desc.focus(),60);
 }
 function closeDesc(){document.getElementById("descOverlay").style.display="none";descEditId=null;}
+function updateDescAttrs(){
+  const holder=document.getElementById("descAttrs");
+  if(!holder||!descEditId)return;
+  const i=issues.find(x=>x.id===descEditId);
+  if(!i){holder.innerHTML="";return;}
+  holder.innerHTML=renderDescAttrs(i);
+}
+function renderDescAttrs(i){
+  const status=i.status||"Open";
+  const sc=S.status.colors[status]||S.status.colors.Open;
+  const pc=S.priority.colors[i.priority];
+  const bSt=`<span class="badge" style="background:${sc.bg};color:${sc.c}">${renderStatusIcon(status)}${esc(status)}</span>`;
+  const bPr=pc?`<span class="badge" style="background:${pc.bg};color:${pc.c}">${renderPriorityBars(i.priority)}${esc(i.priority)}</span>`:`<span class="badge-empty">${renderPriorityBars("")}Priority</span>`;
+  const bTp=i.topic?`<span class="badge topic-badge" style="background:#ede8fe;color:#3c3489"><span class="badge-label">${esc(i.topic)}</span><span class="badge-x" onclick="clearTopic(event,'${i.id}')"><i class="ti ti-x"></i></span></span>`:`<span class="badge-empty">Topic</span>`;
+  const bEf=renderSizeBadge(i.effort,"Size");
+  const due=i.dueDate||"";
+  const dueTone=due?getDueTone(due,status):"";
+  const dueLabel=due?formatDueDate(due):"";
+  const bDue=due?`<span class="due-pill set ${dueTone}">${esc(dueLabel)}<span class="due-x" onclick="clearDueDate(event,'${i.id}')" title="Clear due date"><i class="ti ti-x"></i></span></span>`:`<span class="due-pill empty" title="Set due date"><i class="ti ti-calendar"></i></span>`;
+  const bWho=i.who?`<span class="badge" style="background:#e0f0ff;color:#1a5fa8"><i class="ti ti-user" style="font-size:12px"></i>${esc(i.who)}</span>`:`<span class="badge-empty"><i class="ti ti-user" style="font-size:12px"></i> Who</span>`;
+  return `
+    <button type="button" onclick="openDD(event,'${i.id}','status')">${bSt}</button>
+    <button type="button" onclick="openDD(event,'${i.id}','priority')">${bPr}</button>
+    <button type="button" onclick="openDD(event,'${i.id}','topic')">${bTp}</button>
+    <button type="button" onclick="openDD(event,'${i.id}','effort')">${bEf}</button>
+    <button type="button" class="mobile-due-control" onclick="openDuePicker(event,'${i.id}')">${bDue}<input class="due-native" id="due_desc_${i.id}" type="date" value="${esc(due)}" onclick="event.stopPropagation()" onchange="setDueDateFromInput(event,'${i.id}',this.value)"></button>
+    <button type="button" onclick="openDD(event,'${i.id}','who')">${bWho}</button>
+  `;
+}
 function saveDesc(){
   const i=issues.find(x=>x.id===descEditId);if(!i)return;
 const parsed=parseTitleTopic(
@@ -2636,7 +2834,7 @@ if(parsed.title){
   i.title=parsed.title;
 }
 if(parsed.topic){
-  i.topic=parsed.topic;
+  i.topic=normalizeTopicLabel(parsed.topic);
 }
 i.desc=document.getElementById("descTextarea").value.trim();
   persist();render();closeDesc();toast("Saved ✓");
@@ -2677,7 +2875,7 @@ function doDelete(){
 // add
 function addIssueTop(){
   const f=getFilter();
-  const ni={id:uid(),title:"New Issue",status:f.st||"Open",priority:f.pr||"Medium",topic:f.to||"",effort:"",who:"",dueDate:"",done:false,desc:""};
+  const ni={id:uid(),title:"New Issue",status:f.st||"Open",priority:f.pr||"Medium",topic:normalizeTopicLabel(f.to||""),effort:"",who:"",dueDate:"",done:false,desc:""};
   issues.unshift(ni);
   selectedIds=new Set([ni.id]);
   lastSelectedId=ni.id;
