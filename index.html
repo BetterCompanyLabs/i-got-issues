@@ -85,7 +85,7 @@
 :root[data-theme="dark"] .due-pill.overdue{background:#3a2430!important;color:#ffb4b4!important}
 :root[data-theme="dark"] .due-pill.today{background:#3a3120!important;color:#ffd98a!important}
 :root[data-theme="dark"] .due-pill.future{background:#263354!important;color:#b8ccff!important}
-:root[data-theme="dark"] .due-pill.done{background:#17382c!important;color:#8ff0c0!important}
+:root[data-theme="dark"] .due-pill.done{background:#d1fae5!important;color:#065f46!important}
 :root[data-theme="dark"] .due-pill.empty{background:#2a2a45!important;color:#666!important}
 :root[data-theme="dark"] .due-native{color-scheme:dark}
 .theme-toggle{width:34px;height:30px;justify-content:center;padding:6px 9px}
@@ -1641,7 +1641,7 @@ function renderMiniMeta(id,status,priority,effort,due,dueTone){
     overdue:{bg:"#fee2e2",c:"#991b1b"},
     today:{bg:"#fef3c7",c:"#92400e"},
     future:{bg:"#dbeafe",c:"#1e40af"},
-    done:{bg:"#d1fae5",c:"#065f46"},
+    done:S.status.colors.Done,
     "":{bg:"#f3f4f6",c:"var(--text-3)"}
   };
   const dc=dueColors[dueTone]||dueColors[""];
