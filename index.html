@@ -43,6 +43,7 @@
 :root[data-theme="dark"] .hdr-row th{background:#1e1e38!important;color:#9999bb!important}
 :root[data-theme="dark"] .irow:hover{background:#2a2a45!important}
 :root[data-theme="dark"] .irow.selected{background:#34345f!important;color:#e8e8f0!important}
+:root[data-theme="dark"] .irow.selected:hover{background:#3a3a68!important}
 :root[data-theme="dark"] .irow.selected .title-text{color:#e8e8f0!important}
 :root[data-theme="dark"] .grp-head{background:var(--grp-head-bg,#252540)!important;border-color:#3a3a5c}
 :root[data-theme="dark"] .add-row-btn:hover{background:#2a2a45!important}
@@ -59,6 +60,8 @@
 :root[data-theme="light"] .badge-empty{background:#f5f5f5!important;color:#bbb!important}
 :root[data-theme="light"] .hdr-row th{background:#fafafa!important;color:#666!important}
 :root[data-theme="light"] .irow:hover{background:#f8f8ff!important}
+:root[data-theme="light"] .irow.selected{background:#e9e8ff!important;color:#1a1a2e!important}
+:root[data-theme="light"] .irow.selected:hover{background:#dedcff!important}
 :root[data-theme="light"] .grp-head{background:var(--grp-head-bg,#fff)!important;border-color:#e5e5e5!important}
 :root[data-theme="light"] .add-row-btn:hover{background:#f0f0ff!important}
 :root[data-theme="light"] .dd-popup{background:#fff!important;border-color:#e5e5e5!important}
@@ -180,11 +183,11 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .td-cb{width:var(--cb-col-w);text-align:center;padding:0 6px}
 .td-cb input,.group-select{display:block;margin:0 auto}
 .td-cb input,.group-select{appearance:none;display:grid;place-content:center;cursor:pointer;width:13px;height:13px;border:1.5px solid color-mix(in srgb,var(--border-hover) 62%,transparent);border-radius:4px;background:transparent}
-.td-cb input::before,.group-select::before{content:"";width:7px;height:7px;border-radius:2px;transform:scale(0);transition:transform .08s;background:#fff}
-.td-cb input:checked,.group-select:checked{border-color:var(--purple);background:var(--purple)}
+.td-cb input::before,.group-select::before{content:"";width:7px;height:7px;border-radius:2px;transform:scale(0);transition:transform .08s;background:var(--purple)}
+.td-cb input:checked,.group-select:checked{border-color:var(--purple)!important;background:var(--purple)!important}
 .td-cb input:checked::before,.group-select:checked::before{transform:scale(1)}
-.group-select:indeterminate{border-color:var(--purple);background:var(--purple)}
-.group-select:indeterminate::before{width:7px;height:2px;border-radius:2px;transform:scale(1)}
+.group-select:indeterminate{border-color:var(--purple)!important;background:var(--purple-light)!important}
+.group-select:indeterminate::before{width:7px;height:2px;border:0;border-radius:2px;transform:scale(1);background:var(--purple);margin-top:0}
 .td-title{min-width:320px;width:auto;padding:0}
 .title-wrap{display:flex;align-items:center;gap:7px;padding:0 10px;height:40px}
 .mobile-meta{display:none}
@@ -222,6 +225,10 @@ body.issue-dividers .irow td:last-child{border-right:none}
 .hdr-row th.sortable{cursor:pointer;user-select:none}
 .hdr-row th.sortable:hover{color:var(--purple)}
 .hdr-row th.sort-active{color:var(--purple)!important}
+.sort-head{display:inline-flex;align-items:center;justify-content:center;max-width:100%;min-width:0;position:relative}
+.th-title .sort-head{justify-content:flex-start}
+.sort-head-label{min-width:0;overflow:hidden;text-overflow:clip;white-space:nowrap}
+.sort-chevron{position:absolute;left:calc(100% + 2px);top:50%;transform:translateY(-50%);font-size:9px;color:var(--text-3);line-height:1;pointer-events:none}
 .td-badge{text-align:center;cursor:pointer;position:relative;width:auto;min-width:0}
 .td-badge:hover .badge-inner{filter:brightness(.95)}
 .badge-inner{display:flex;align-items:center;justify-content:center;height:40px;padding:0 6px}
@@ -1456,6 +1463,12 @@ function cycleHeaderSort(sortKey){
   render();
 }
 
+function renderSortHeader(sortKey,label){
+  const active=document.getElementById("qSort")?.value===sortKey&&sortDirection!=="manual";
+  const icon=sortDirection==="desc"?"ti-chevron-down":"ti-chevron-up";
+  return `<span class="sort-head"><span class="sort-head-label">${esc(label)}</span>${active?`<i class="ti ${icon} sort-chevron"></i>`:""}</span>`;
+}
+
 function render(){
   selectedIds=new Set([...selectedIds].filter(id=>issues.some(i=>i.id===id)));
   const f=getFilter();
@@ -1529,13 +1542,13 @@ function renderGroup(name,items,dotColor,key){
       <colgroup><col style="width:var(--cb-col-w)"><col><col style="width:96px"><col style="width:84px"><col style="width:115px"><col style="width:66px"><col style="width:96px"><col style="width:58px"><col style="width:40px"></colgroup>
       <thead><tr class="hdr-row">
         <th><input type="checkbox" class="group-select" ${allSelected?"checked":""} ${someSelected&&!allSelected?'data-indeterminate="true"':""} onclick="event.stopPropagation()" onchange='toggleSelectGroup(${JSON.stringify(itemIds)},this.checked)'></th>
-      <th class="th-title sortable" onclick="cycleHeaderSort('title')">Issue</th>
-<th class="sortable" onclick="cycleHeaderSort('status')">Status</th>
-<th class="sortable" onclick="cycleHeaderSort('priority')">Priority</th>
-<th class="sortable" onclick="cycleHeaderSort('topic')">Topic</th>
-<th class="sortable" onclick="cycleHeaderSort('effort')">Size</th>
-<th class="sortable" onclick="cycleHeaderSort('dueDate')">Due Date</th>
-<th class="sortable" onclick="cycleHeaderSort('who')">Who</th>
+      <th class="th-title sortable" onclick="cycleHeaderSort('title')">${renderSortHeader("title","Issue")}</th>
+<th class="sortable" onclick="cycleHeaderSort('status')">${renderSortHeader("status","Status")}</th>
+<th class="sortable" onclick="cycleHeaderSort('priority')">${renderSortHeader("priority","Priority")}</th>
+<th class="sortable" onclick="cycleHeaderSort('topic')">${renderSortHeader("topic","Topic")}</th>
+<th class="sortable" onclick="cycleHeaderSort('effort')">${renderSortHeader("effort","Size")}</th>
+<th class="sortable" onclick="cycleHeaderSort('dueDate')">${renderSortHeader("dueDate","Due Date")}</th>
+<th class="sortable" onclick="cycleHeaderSort('who')">${renderSortHeader("who","Who")}</th>
 <th></th>
         </tr></thead>
       <tbody>
@@ -1812,9 +1825,12 @@ function handleCheckboxClick(e,id){
     const [from,to]=a<b?[a,b]:[b,a];
     currentVisibleIds.slice(from,to+1).forEach(x=>{if(shouldSelect)selectedIds.add(x);else selectedIds.delete(x);});
     selectionAnchorId=selectionAnchorId||lastSelectedId;
-  }else{
+  }else if(e.metaKey||e.ctrlKey){
     if(shouldSelect)selectedIds.add(id);
     else selectedIds.delete(id);
+    selectionAnchorId=id;
+  }else{
+    selectedIds=shouldSelect?new Set([id]):new Set();
     selectionAnchorId=id;
   }
   lastSelectedId=id;
